@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Data\profiles.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\profiles.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties data_4profiles_1json__JsonSchema="https://raw.githubusercontent.com/knative/func/latest-release/schema/func_yaml-schema.json" /></VisualStudio></ProjectExtensions>
+
+</Project>

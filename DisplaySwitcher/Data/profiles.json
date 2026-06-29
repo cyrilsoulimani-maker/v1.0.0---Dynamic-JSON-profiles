@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Gaming",
+    "width": 2560,
+    "height": 1440,
+    "frequency": 360
+  },
+  {
+    "name": "Streaming",
+    "width": 1920,
+    "height": 1080,
+    "frequency": 120
+  },
+  {
+    "name": "Bureau",
+    "width": 2560,
+    "height": 1440,
+    "frequency": 144
+  },
+  {
+    "name": "Rust",
+    "width": 1500,
+    "height": 790,
+    "frequency": 360
+  },
+  {
+    "name": "Rust",
+    "width": 2560,
+    "height": 1440,
+    "frequency": 360
+  },
+  {
+    "name": "Rust",
+    "width": 1920,
+    "height": 1080,
+    "frequency": 120
+  }
+]

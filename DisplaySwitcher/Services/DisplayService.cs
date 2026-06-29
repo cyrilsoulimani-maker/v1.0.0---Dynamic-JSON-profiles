@@ -1,0 +1,127 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Windows;
+
+namespace DisplaySwitcher.Services
+{
+    public static class DisplayService
+    {
+        private const int ENUM_CURRENT_SETTINGS = -1;
+
+        private const int DM_PELSWIDTH = 0x00080000;
+        private const int DM_PELSHEIGHT = 0x00100000;
+        private const int DM_DISPLAYFREQUENCY = 0x00400000;
+        private const int CDS_UPDATEREGISTRY = 0x00000001;
+
+        private const int DISP_CHANGE_SUCCESSFUL = 0;
+        private const int DISP_CHANGE_RESTART = 1;
+        private const int DISP_CHANGE_FAILED = -1;
+        private const int DISP_CHANGE_BADMODE = -2;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private struct DEVMODE
+        {
+            private const int CCHDEVICENAME = 32;
+            private const int CCHFORMNAME = 32;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
+            public string dmDeviceName;
+
+            public short dmSpecVersion;
+            public short dmDriverVersion;
+            public short dmSize;
+            public short dmDriverExtra;
+            public int dmFields;
+
+            public int dmPositionX;
+            public int dmPositionY;
+            public int dmDisplayOrientation;
+            public int dmDisplayFixedOutput;
+
+            public short dmColor;
+            public short dmDuplex;
+            public short dmYResolution;
+            public short dmTTOption;
+            public short dmCollate;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHFORMNAME)]
+            public string dmFormName;
+
+            public short dmLogPixels;
+
+            public int dmBitsPerPel;
+            public int dmPelsWidth;
+            public int dmPelsHeight;
+
+            public int dmDisplayFlags;
+            public int dmDisplayFrequency;
+
+            public int dmICMMethod;
+            public int dmICMIntent;
+            public int dmMediaType;
+            public int dmDitherType;
+            public int dmReserved1;
+            public int dmReserved2;
+
+            public int dmPanningWidth;
+            public int dmPanningHeight;
+        }
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool EnumDisplaySettings(
+    string? lpszDeviceName,
+    int iModeNum,
+    ref DEVMODE lpDevMode);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int ChangeDisplaySettings(
+            ref DEVMODE lpDevMode,
+            int dwFlags);
+
+        public static (int Width, int Height, int Frequency) GetCurrentMode()
+        {
+            DEVMODE mode = new DEVMODE();
+            mode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+
+            if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref mode))
+                throw new Exception("Impossible de lire les paramètres d'affichage.");
+
+            return (
+                mode.dmPelsWidth,
+                mode.dmPelsHeight,
+                mode.dmDisplayFrequency
+            );
+        }
+
+        public static bool SetDisplayMode(
+            int width,
+            int height,
+            int frequency)
+        {
+            DEVMODE mode = new DEVMODE();
+
+            mode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+
+            if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref mode))
+            {
+                return false;
+            }
+
+            mode.dmPelsWidth = width;
+            mode.dmPelsHeight = height;
+            mode.dmDisplayFrequency = frequency;
+
+            mode.dmFields =
+                DM_PELSWIDTH |
+                DM_PELSHEIGHT |
+                DM_DISPLAYFREQUENCY;
+
+            int result = ChangeDisplaySettings(
+                ref mode,
+                0);
+
+            return result == DISP_CHANGE_SUCCESSFUL;
+
+
+        }
+    }
+}
