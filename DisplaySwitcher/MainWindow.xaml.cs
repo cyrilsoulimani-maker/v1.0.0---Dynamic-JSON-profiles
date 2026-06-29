@@ -61,22 +61,40 @@ namespace DisplaySwitcher
             ProfilesPanel.Children.Clear();
 
             var profiles = ProfileService.LoadProfiles();
+            var currentMode = DisplayService.GetCurrentMode();
 
             foreach (DisplayProfile profile in profiles)
             {
-                RadioButton radio = new RadioButton();
-
-                radio.Content =
-                    $"{profile.Name} - {profile.Width} × {profile.Height} @ {profile.Frequency} Hz";
-
-                radio.Tag = profile;
-
-                radio.FontSize = 18;
-                radio.Foreground = System.Windows.Media.Brushes.White;
-                radio.Margin = new Thickness(0, 10, 0, 10);
+                RadioButton radio = CreateProfileRadioButton(
+                    profile,
+                    currentMode);
 
                 ProfilesPanel.Children.Add(radio);
             }
+        }
+        private RadioButton CreateProfileRadioButton(
+            DisplayProfile profile,
+            (int Width, int Height, int Frequency) currentMode)
+        {
+            RadioButton radio = new RadioButton();
+
+            radio.Content =
+                $"{profile.Name} - {profile.Width} × {profile.Height} @ {profile.Frequency} Hz";
+
+            radio.Tag = profile;
+
+            if (profile.Width == currentMode.Width &&
+                profile.Height == currentMode.Height &&
+                profile.Frequency == currentMode.Frequency)
+            {
+                radio.IsChecked = true;
+            }
+
+            radio.FontSize = 18;
+            radio.Foreground = System.Windows.Media.Brushes.White;
+            radio.Margin = new Thickness(0, 10, 0, 10);
+
+            return radio;
         }
     }
 }
