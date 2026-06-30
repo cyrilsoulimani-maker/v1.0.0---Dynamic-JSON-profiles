@@ -1,4 +1,4 @@
-﻿namespace DisplaySwitcher.Services.Nvidia;
+﻿namespace DisplaySwitcher.Services.Nvidia.Interop;
 
 public enum NvApiStatus
 {

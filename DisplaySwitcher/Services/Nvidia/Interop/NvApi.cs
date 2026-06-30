@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Linq;
 
-namespace DisplaySwitcher.Services.Nvidia;
+namespace DisplaySwitcher.Services.Nvidia.Interop;
 
 public static class NvApi
 {
