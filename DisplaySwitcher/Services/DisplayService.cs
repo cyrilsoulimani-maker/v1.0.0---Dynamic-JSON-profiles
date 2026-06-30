@@ -1,6 +1,6 @@
-﻿using System;
+﻿using DisplaySwitcher.Models;
+using System;
 using System.Runtime.InteropServices;
-using System.Windows;
 
 namespace DisplaySwitcher.Services
 {
@@ -11,12 +11,8 @@ namespace DisplaySwitcher.Services
         private const int DM_PELSWIDTH = 0x00080000;
         private const int DM_PELSHEIGHT = 0x00100000;
         private const int DM_DISPLAYFREQUENCY = 0x00400000;
-        private const int CDS_UPDATEREGISTRY = 0x00000001;
 
         private const int DISP_CHANGE_SUCCESSFUL = 0;
-        private const int DISP_CHANGE_RESTART = 1;
-        private const int DISP_CHANGE_FAILED = -1;
-        private const int DISP_CHANGE_BADMODE = -2;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct DEVMODE
@@ -66,23 +62,24 @@ namespace DisplaySwitcher.Services
             public int dmPanningWidth;
             public int dmPanningHeight;
         }
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool EnumDisplaySettings(
-    string? lpszDeviceName,
-    int iModeNum,
-    ref DEVMODE lpDevMode);
+            string? lpszDeviceName,
+            int iModeNum,
+            ref DEVMODE lpDevMode);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int ChangeDisplaySettings(
             ref DEVMODE lpDevMode,
             int dwFlags);
 
-        public static (int Width, int Height, int Frequency) GetCurrentMode()
+        public static DisplayModeInfo GetCurrentMode()
         {
             return GetCurrentMode(null);
         }
 
-        public static (int Width, int Height, int Frequency) GetCurrentMode(string? deviceName)
+        public static DisplayModeInfo GetCurrentMode(string? deviceName)
         {
             DEVMODE mode = new DEVMODE();
             mode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
@@ -90,11 +87,12 @@ namespace DisplaySwitcher.Services
             if (!EnumDisplaySettings(deviceName, ENUM_CURRENT_SETTINGS, ref mode))
                 throw new Exception("Impossible de lire les paramètres d'affichage.");
 
-            return (
-                mode.dmPelsWidth,
-                mode.dmPelsHeight,
-                mode.dmDisplayFrequency
-            );
+            return new DisplayModeInfo
+            {
+                Width = mode.dmPelsWidth,
+                Height = mode.dmPelsHeight,
+                Frequency = mode.dmDisplayFrequency
+            };
         }
 
         public static bool SetDisplayMode(
@@ -103,13 +101,10 @@ namespace DisplaySwitcher.Services
             int frequency)
         {
             DEVMODE mode = new DEVMODE();
-
             mode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
 
             if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref mode))
-            {
                 return false;
-            }
 
             mode.dmPelsWidth = width;
             mode.dmPelsHeight = height;
@@ -120,13 +115,9 @@ namespace DisplaySwitcher.Services
                 DM_PELSHEIGHT |
                 DM_DISPLAYFREQUENCY;
 
-            int result = ChangeDisplaySettings(
-                ref mode,
-                0);
+            int result = ChangeDisplaySettings(ref mode, 0);
 
             return result == DISP_CHANGE_SUCCESSFUL;
-
-
         }
     }
 }
