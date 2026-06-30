@@ -23,6 +23,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="10.0.9" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties data_4profiles_1json__JsonSchema="https://raw.githubusercontent.com/knative/func/latest-release/schema/func_yaml-schema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

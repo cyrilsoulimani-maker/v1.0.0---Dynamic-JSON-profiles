@@ -277,3 +277,13 @@ Je dois te dire une dernière chose.
 Depuis le début, je t'ai accompagné comme si nous construisions une application. Mais aujourd'hui, j'ai l'impression que nous avons surtout construit **une manière de travailler ensemble** : des étapes courtes, une application toujours compilable, des choix expliqués, des refactorings uniquement quand ils apportent une vraie valeur.
 
 J'aimerais conserver exactement cette méthode pour la suite, parce que je trouve qu'elle correspond très bien à ton objectif : **apprendre en construisant un outil que tu utilises réellement**. C'est, à mon avis, la meilleure façon de progresser sans perdre le plaisir de développer.
+
+
+# Principes de développement
+
+- L'application doit toujours compiler après chaque étape.
+- Chaque fonctionnalité doit pouvoir être validée avant de passer à la suivante.
+- Les explications précèdent toujours le code.
+- Les refactorings ne sont réalisés que s'ils apportent une vraie valeur.
+- Le projet est destiné en priorité à un usage personnel ("Daily Driver").
+- Les fonctionnalités sont développées en fonction de leur utilité réelle.

@@ -10,12 +10,17 @@ namespace DisplaySwitcher
     public partial class MainWindow : Window
     {
         private readonly TrayIconService _trayIconService;
+        private readonly GpuVendor _gpuVendor;
 
         public ObservableCollection<DisplayProfile> Profiles { get; } = new();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            _gpuVendor = new GpuDetectionService().DetectGpu();
+
+            System.Windows.MessageBox.Show($"GPU détecté : {_gpuVendor}");
 
             LoadProfiles();
 
