@@ -1,10 +1,8 @@
 ﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
-using DisplaySwitcher.Services.Nvidia.Interop;
+
 
 namespace DisplaySwitcher
 {
@@ -20,6 +18,15 @@ namespace DisplaySwitcher
             InitializeComponent();
 
             _gpuVendor = new GpuDetectionService().DetectGpu();
+
+            var displayService = new DisplayEnumerationService();
+
+            var displays = displayService.GetDisplays();
+
+            System.Windows.MessageBox.Show(
+                string.Join(
+                    Environment.NewLine,
+                    displays.Select(d => d.DisplayName)));
 
             LoadProfiles();
 
