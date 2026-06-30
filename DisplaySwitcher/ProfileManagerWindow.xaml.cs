@@ -169,10 +169,6 @@ namespace DisplaySwitcher
             profile.Width = mode.Width;
             profile.Height = mode.Height;
             profile.Frequency = mode.Frequency;
-
-            WidthTextBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty)?.UpdateTarget();
-            HeightTextBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty)?.UpdateTarget();
-            FrequencyTextBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty)?.UpdateTarget();
         }
     }
 }
