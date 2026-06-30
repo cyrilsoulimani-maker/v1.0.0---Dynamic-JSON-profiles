@@ -1,6 +1,8 @@
 ﻿using DisplaySwitcher.Models;
 using System;
 using System.Runtime.InteropServices;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DisplaySwitcher.Services
 {
@@ -93,6 +95,45 @@ namespace DisplaySwitcher.Services
                 Height = mode.dmPelsHeight,
                 Frequency = mode.dmDisplayFrequency
             };
+        }
+
+        public static List<DisplayModeInfo> GetAvailableModes(string deviceName)
+        {
+            List<DisplayModeInfo> modes = new();
+
+            int modeIndex = 0;
+
+            while (true)
+            {
+                DEVMODE mode = new DEVMODE();
+                mode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+
+                if (!EnumDisplaySettings(deviceName, modeIndex, ref mode))
+                    break;
+
+                DisplayModeInfo displayMode = new DisplayModeInfo
+                {
+                    Width = mode.dmPelsWidth,
+                    Height = mode.dmPelsHeight,
+                    Frequency = mode.dmDisplayFrequency
+                };
+
+                if (!modes.Any(m =>
+                    m.Width == displayMode.Width &&
+                    m.Height == displayMode.Height &&
+                    m.Frequency == displayMode.Frequency))
+                {
+                    modes.Add(displayMode);
+                }
+
+                modeIndex++;
+            }
+
+            return modes
+                .OrderBy(m => m.Width)
+                .ThenBy(m => m.Height)
+                .ThenBy(m => m.Frequency)
+                .ToList();
         }
 
         public static bool SetDisplayMode(
