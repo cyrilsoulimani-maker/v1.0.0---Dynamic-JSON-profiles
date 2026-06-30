@@ -18,7 +18,7 @@
          FontSize="16"
          Margin="0,0,20,0"
          ItemsSource="{Binding Profiles}"
-         SelectedItem="{Binding SelectedProfile, Mode=TwoWay}"/>
+         SelectionChanged="ProfilesListBox_SelectionChanged"/>
 
         <StackPanel Grid.Column="1">
 
@@ -27,12 +27,22 @@
          Margin="0,5,0,15"
          Text="{Binding SelectedItem.Name, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <TextBlock Text="Écran" Margin="0,8,0,4" />
+            <TextBlock Text="Écran" Foreground="White" Margin="0,8,0,4" />
             <ComboBox
-    ItemsSource="{Binding Displays}"
-    DisplayMemberPath="DisplayName"
-    SelectedValuePath="WindowsName"
-    SelectedValue="{Binding SelectedProfile.DisplayDeviceName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+             ItemsSource="{Binding Displays}"
+             DisplayMemberPath="DisplayName"
+             SelectedValuePath="WindowsName"
+             SelectedValue="{Binding SelectedItem.DisplayDeviceName, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+             SelectionChanged="DisplayComboBox_SelectionChanged"/>
+
+            <TextBlock
+             Text="Mode" Foreground="White"
+             Margin="0,8,0,4"/>
+
+            <ComboBox
+             x:Name="ModeComboBox"
+             ItemsSource="{Binding AvailableModes}"
+             SelectionChanged="ModeComboBox_SelectionChanged" />
 
             <TextBlock Text="Largeur" Foreground="White"/>
             <TextBox x:Name="WidthTextBox"

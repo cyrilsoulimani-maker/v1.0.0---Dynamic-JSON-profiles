@@ -1,9 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
-using DisplaySwitcher.Models;
+﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace DisplaySwitcher
 {
@@ -31,6 +32,46 @@ namespace DisplaySwitcher
 
         public event Action? ProfilesSaved;
 
+        private void LoadAvailableModes(string deviceName)
+        {
+            AvailableModes.Clear();
+
+            if (string.IsNullOrWhiteSpace(deviceName))
+                return;
+
+            foreach (DisplayModeInfo mode in DisplayService.GetAvailableModes(deviceName))
+            {
+                AvailableModes.Add(mode);
+            }
+        }
+
+        private void DisplayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ProfilesListBox.SelectedItem is not DisplayProfile selectedProfile)
+                return;
+
+            LoadAvailableModes(selectedProfile.DisplayDeviceName);
+        }
+
+        private void ProfilesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ProfilesListBox.SelectedItem is not DisplayProfile selectedProfile)
+                return;
+
+            if (string.IsNullOrWhiteSpace(selectedProfile.DisplayDeviceName))
+            {
+                DisplayDeviceInfo? primaryDisplay =
+                    Displays.FirstOrDefault(display => display.IsPrimary);
+
+                if (primaryDisplay != null)
+                {
+                    selectedProfile.DisplayDeviceName = primaryDisplay.WindowsName;
+                }
+            }
+
+            LoadAvailableModes(selectedProfile.DisplayDeviceName);
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             ProfileService.SaveProfiles(Profiles.ToList());
@@ -39,6 +80,7 @@ namespace DisplaySwitcher
 
             Close();
         }
+
         private void NewProfileButton_Click(object sender, RoutedEventArgs e)
         {
             DisplayProfile profile = new DisplayProfile
@@ -56,6 +98,7 @@ namespace DisplaySwitcher
             NameTextBox.Focus();
             NameTextBox.SelectAll();
         }
+
         private string GetUniqueProfileName(string baseName)
         {
             string name = baseName;
@@ -69,21 +112,18 @@ namespace DisplaySwitcher
 
             return name;
         }
+
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             if (ProfilesListBox.SelectedItem is not DisplayProfile profile)
             {
-                System.Windows.MessageBox.Show(
-                    "Veuillez sélectionner un profil.");
-
+                System.Windows.MessageBox.Show("Veuillez sélectionner un profil.");
                 return;
             }
 
             if (Profiles.Count == 1)
             {
-                System.Windows.MessageBox.Show(
-                    "Impossible de supprimer le dernier profil.");
-
+                System.Windows.MessageBox.Show("Impossible de supprimer le dernier profil.");
                 return;
             }
 
@@ -106,12 +146,33 @@ namespace DisplaySwitcher
                 int newIndex = Math.Min(index, Profiles.Count - 1);
                 ProfilesListBox.SelectedIndex = newIndex;
             }
-
         }
+
         private void NumericOnly_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             e.Handled = !int.TryParse(e.Text, out _);
         }
-    }
+        private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ProfilesListBox.SelectedItem is not DisplayProfile profile)
+            {
+                System.Windows.MessageBox.Show("Aucun profil sélectionné.");
+                return;
+            }
 
+            if (ModeComboBox.SelectedItem is not DisplayModeInfo mode)
+            {
+                System.Windows.MessageBox.Show("Aucun mode sélectionné.");
+                return;
+            }
+
+            profile.Width = mode.Width;
+            profile.Height = mode.Height;
+            profile.Frequency = mode.Frequency;
+
+            WidthTextBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty)?.UpdateTarget();
+            HeightTextBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty)?.UpdateTarget();
+            FrequencyTextBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty)?.UpdateTarget();
+        }
+    }
 }

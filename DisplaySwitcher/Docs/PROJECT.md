@@ -287,3 +287,16 @@ J'aimerais conserver exactement cette méthode pour la suite, parce que je trouv
 - Les refactorings ne sont réalisés que s'ils apportent une vraie valeur.
 - Le projet est destiné en priorité à un usage personnel ("Daily Driver").
 - Les fonctionnalités sont développées en fonction de leur utilité réelle.
+
+# Interface utilisateur (V2)
+
+Le Profile Manager suit la maquette V2 validée.
+
+Principes :
+
+- Interface sombre.
+- Accent vert.
+- Le mode standard est privilégié.
+- Le mode personnalisé est réservé aux résolutions non disponibles.
+- Les écrans sont sélectionnés avant les modes.
+
