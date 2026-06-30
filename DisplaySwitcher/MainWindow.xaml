@@ -50,10 +50,32 @@
 
         </Border>
 
-        <StackPanel x:Name="ProfilesPanel"
-            Grid.Row="2"
-            Margin="0,30,0,30">
-        </StackPanel>
+        <ItemsControl x:Name="ProfilesItemsControl"
+              Grid.Row="2"
+              Margin="0,30,0,30"
+              ItemsSource="{Binding Profiles}">
+
+            <ItemsControl.ItemTemplate>
+<DataTemplate>
+                    <RadioButton FontSize="18"
+             Foreground="White"
+             Margin="0,10,0,10"
+             GroupName="DisplayProfiles"
+             IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                        <TextBlock>
+            <Run Text="{Binding Name}"/>
+            <Run Text=" - "/>
+            <Run Text="{Binding Width}"/>
+            <Run Text=" × "/>
+            <Run Text="{Binding Height}"/>
+            <Run Text=" @ "/>
+            <Run Text="{Binding Frequency}"/>
+            <Run Text=" Hz"/>
+        </TextBlock>
+    </RadioButton>
+</DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
         <Button Grid.Row="3"
         x:Name="ApplyButton"

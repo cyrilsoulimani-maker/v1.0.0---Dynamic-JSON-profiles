@@ -1,39 +1,52 @@
 ﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services;
+using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
+using System.Linq;
 
 namespace DisplaySwitcher
 {
     public partial class MainWindow : Window
     {
+        public List<DisplayProfile> Profiles { get; set; } = new List<DisplayProfile>();
+
         public MainWindow()
         {
             InitializeComponent();
 
-            var mode = DisplayService.GetCurrentMode();
+            Profiles = ProfileService.LoadProfiles();
+
+            var currentMode = DisplayService.GetCurrentMode();
+
+            DisplayProfile? activeProfile = Profiles.FirstOrDefault(profile =>
+                profile.Width == currentMode.Width &&
+                profile.Height == currentMode.Height &&
+                profile.Frequency == currentMode.Frequency);
+
+            if (activeProfile != null)
+            {
+                activeProfile.IsSelected = true;
+            }
+
+            DataContext = this;
 
             CurrentResolutionText.Text =
-                $"Résolution actuelle : {mode.Width} × {mode.Height} @ {mode.Frequency} Hz";
-
-            LoadProfiles();
+                $"Résolution actuelle : {currentMode.Width} × {currentMode.Height} @ {currentMode.Frequency} Hz";
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (RadioButton radio in ProfilesPanel.Children)
+            DisplayProfile? selectedProfile =
+                Profiles.FirstOrDefault(profile => profile.IsSelected);
+
+            if (selectedProfile != null)
             {
-                if (radio.IsChecked == true)
-                {
-                    DisplayProfile profile = (DisplayProfile)radio.Tag;
-
-                    ApplyProfile(profile);
-
-                    return;
-                }
+                ApplyProfile(selectedProfile);
             }
-
-            MessageBox.Show("Veuillez sélectionner un profil.");
+            else
+            {
+                MessageBox.Show("Veuillez sélectionner un profil.");
+            }
         }
 
         private void ApplyProfile(DisplayProfile profile)
@@ -55,46 +68,6 @@ namespace DisplaySwitcher
             {
                 MessageBox.Show($"Impossible d'appliquer le mode {profile.Name}.");
             }
-        }
-        private void LoadProfiles()
-        {
-            ProfilesPanel.Children.Clear();
-
-            var profiles = ProfileService.LoadProfiles();
-            var currentMode = DisplayService.GetCurrentMode();
-
-            foreach (DisplayProfile profile in profiles)
-            {
-                RadioButton radio = CreateProfileRadioButton(
-                    profile,
-                    currentMode);
-
-                ProfilesPanel.Children.Add(radio);
-            }
-        }
-        private RadioButton CreateProfileRadioButton(
-            DisplayProfile profile,
-            (int Width, int Height, int Frequency) currentMode)
-        {
-            RadioButton radio = new RadioButton();
-
-            radio.Content =
-                $"{profile.Name} - {profile.Width} × {profile.Height} @ {profile.Frequency} Hz";
-
-            radio.Tag = profile;
-
-            if (profile.Width == currentMode.Width &&
-                profile.Height == currentMode.Height &&
-                profile.Frequency == currentMode.Frequency)
-            {
-                radio.IsChecked = true;
-            }
-
-            radio.FontSize = 18;
-            radio.Foreground = System.Windows.Media.Brushes.White;
-            radio.Margin = new Thickness(0, 10, 0, 10);
-
-            return radio;
         }
     }
 }
