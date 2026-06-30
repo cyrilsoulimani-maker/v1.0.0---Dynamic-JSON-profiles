@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using DisplaySwitcher.Services.Nvidia;
 
 namespace DisplaySwitcher
 {
@@ -19,8 +20,6 @@ namespace DisplaySwitcher
             InitializeComponent();
 
             _gpuVendor = new GpuDetectionService().DetectGpu();
-
-            System.Windows.MessageBox.Show($"GPU détecté : {_gpuVendor}");
 
             LoadProfiles();
 
