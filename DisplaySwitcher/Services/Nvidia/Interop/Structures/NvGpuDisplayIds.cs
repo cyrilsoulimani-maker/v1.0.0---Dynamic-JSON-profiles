@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace DisplaySwitcher.Services.Nvidia.Interop;
+namespace DisplaySwitcher.Services.Nvidia.Interop.Structures;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct NvGpuDisplayIds

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DisplaySwitcher.Services.Nvidia.Interop.Structures;
+using System;
 using System.Runtime.InteropServices;
 
 namespace DisplaySwitcher.Services.Nvidia.Interop;

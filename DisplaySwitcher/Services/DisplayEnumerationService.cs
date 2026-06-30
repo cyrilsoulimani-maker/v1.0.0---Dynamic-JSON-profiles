@@ -11,7 +11,7 @@ public class DisplayEnumerationService
 
         foreach (Screen screen in Screen.AllScreens)
         {
-            var currentMode = DisplayService.GetCurrentMode();
+            var currentMode = DisplayService.GetCurrentMode(screen.DeviceName);
 
             displays.Add(new DisplayDeviceInfo
             {

@@ -79,10 +79,15 @@ namespace DisplaySwitcher.Services
 
         public static (int Width, int Height, int Frequency) GetCurrentMode()
         {
+            return GetCurrentMode(null);
+        }
+
+        public static (int Width, int Height, int Frequency) GetCurrentMode(string? deviceName)
+        {
             DEVMODE mode = new DEVMODE();
             mode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
 
-            if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref mode))
+            if (!EnumDisplaySettings(deviceName, ENUM_CURRENT_SETTINGS, ref mode))
                 throw new Exception("Impossible de lire les paramètres d'affichage.");
 
             return (

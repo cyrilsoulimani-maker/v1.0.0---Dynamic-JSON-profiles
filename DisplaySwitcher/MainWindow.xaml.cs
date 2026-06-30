@@ -19,15 +19,6 @@ namespace DisplaySwitcher
 
             _gpuVendor = new GpuDetectionService().DetectGpu();
 
-            var displayService = new DisplayEnumerationService();
-
-            var displays = displayService.GetDisplays();
-
-            System.Windows.MessageBox.Show(
-                string.Join(
-                    Environment.NewLine,
-                    displays.Select(d => d.DisplayName)));
-
             LoadProfiles();
 
             _trayIconService = new TrayIconService(Profiles);
