@@ -28,5 +28,16 @@ namespace DisplaySwitcher.Services
 
             return profiles ?? new List<DisplayProfile>();
         }
+        public static void SaveProfiles(List<DisplayProfile> profiles)
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            string json = JsonSerializer.Serialize(profiles, options);
+
+            File.WriteAllText(ProfilesFilePath, json);
+        }
     }
 }

@@ -1,37 +1,65 @@
 ﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services;
-using System.Collections.Generic;
-using System.Windows;
+using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace DisplaySwitcher
 {
     public partial class MainWindow : Window
     {
-        public List<DisplayProfile> Profiles { get; set; } = new List<DisplayProfile>();
+        private readonly TrayIconService _trayIconService;
+
+        public ObservableCollection<DisplayProfile> Profiles { get; } = new();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            Profiles = ProfileService.LoadProfiles();
+            LoadProfiles();
 
-            var currentMode = DisplayService.GetCurrentMode();
+            _trayIconService = new TrayIconService(Profiles);
 
-            DisplayProfile? activeProfile = Profiles.FirstOrDefault(profile =>
-                profile.Width == currentMode.Width &&
-                profile.Height == currentMode.Height &&
-                profile.Frequency == currentMode.Frequency);
-
-            if (activeProfile != null)
+            _trayIconService.OpenRequested += () =>
             {
-                activeProfile.IsSelected = true;
-            }
+                Show();
+                WindowState = WindowState.Normal;
+                Activate();
+            };
+
+            _trayIconService.ProfileRequested += profile =>
+            {
+                ApplyProfile(profile);
+            };
+
+            _trayIconService.ManageProfilesRequested += () =>
+            {
+                ProfileManagerWindow window = new ProfileManagerWindow(Profiles);
+                window.Owner = this;
+
+                window.ProfilesSaved += () =>
+                {
+                    _trayIconService.RefreshContextMenu();
+                };
+
+                window.ShowDialog();
+            };
 
             DataContext = this;
 
-            CurrentResolutionText.Text =
-                $"Résolution actuelle : {currentMode.Width} × {currentMode.Height} @ {currentMode.Frequency} Hz";
+            RefreshCurrentResolutionText();
+            SelectActiveProfile();
+        }
+
+        private void LoadProfiles()
+        {
+            Profiles.Clear();
+
+            foreach (DisplayProfile profile in ProfileService.LoadProfiles())
+            {
+                Profiles.Add(profile);
+            }
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -45,12 +73,19 @@ namespace DisplaySwitcher
             }
             else
             {
-                MessageBox.Show("Veuillez sélectionner un profil.");
+                System.Windows.MessageBox.Show("Veuillez sélectionner un profil.");
             }
         }
 
         private void ApplyProfile(DisplayProfile profile)
         {
+            foreach (DisplayProfile item in Profiles)
+            {
+                item.IsSelected = false;
+            }
+
+            profile.IsSelected = true;
+
             bool success = DisplayService.SetDisplayMode(
                 profile.Width,
                 profile.Height,
@@ -58,15 +93,50 @@ namespace DisplaySwitcher
 
             if (success)
             {
-                MessageBox.Show(
-                    $"Mode {profile.Name} appliqué : {profile.Width} × {profile.Height} @ {profile.Frequency} Hz");
-
-                CurrentResolutionText.Text =
-                    $"Résolution actuelle : {profile.Width} × {profile.Height} @ {profile.Frequency} Hz";
+                RefreshCurrentResolutionText();
+                _trayIconService.RefreshContextMenu();
             }
             else
             {
-                MessageBox.Show($"Impossible d'appliquer le mode {profile.Name}.");
+                System.Windows.MessageBox.Show($"Impossible d'appliquer le mode {profile.Name}.");
+            }
+        }
+
+        private void RefreshCurrentResolutionText()
+        {
+            var mode = DisplayService.GetCurrentMode();
+
+            CurrentResolutionText.Text =
+                $"Résolution actuelle : {mode.Width} × {mode.Height} @ {mode.Frequency} Hz";
+        }
+
+        private void SelectActiveProfile()
+        {
+            var currentMode = DisplayService.GetCurrentMode();
+
+            DisplayProfile? activeProfile = Profiles.FirstOrDefault(profile =>
+                profile.Width == currentMode.Width &&
+                profile.Height == currentMode.Height &&
+                profile.Frequency == currentMode.Frequency);
+
+            if (activeProfile != null)
+            {
+                foreach (DisplayProfile profile in Profiles)
+                {
+                    profile.IsSelected = false;
+                }
+
+                activeProfile.IsSelected = true;
+            }
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+
+            if (WindowState == WindowState.Minimized)
+            {
+                Hide();
             }
         }
     }

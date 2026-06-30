@@ -10,7 +10,7 @@
         Width="1200"
         MinHeight="720"
         MinWidth="1200"
-        ResizeMode="NoResize"
+        ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         Background="#181818">
     <Grid Margin="20">
