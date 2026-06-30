@@ -10,12 +10,20 @@ namespace DisplaySwitcher
     public partial class ProfileManagerWindow : Window
     {
         public ObservableCollection<DisplayProfile> Profiles { get; }
+        public ObservableCollection<DisplayDeviceInfo> Displays { get; } = new();
 
         public ProfileManagerWindow(ObservableCollection<DisplayProfile> profiles)
         {
             InitializeComponent();
 
             Profiles = profiles;
+
+            DisplayEnumerationService displayService = new();
+
+            foreach (DisplayDeviceInfo display in displayService.GetDisplays())
+            {
+                Displays.Add(display);
+            }
 
             DataContext = this;
         }

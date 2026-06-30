@@ -27,6 +27,14 @@
          Margin="0,5,0,15"
          Text="{Binding SelectedItem.Name, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
+            <TextBlock Text="Écran" Margin="0,8,0,4" />
+
+            <ComboBox
+    ItemsSource="{Binding Displays}"
+    DisplayMemberPath="DisplayName"
+    SelectedValuePath="WindowsName"
+    SelectedValue="{Binding SelectedProfile.DisplayDeviceName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
             <TextBlock Text="Largeur" Foreground="White"/>
             <TextBox x:Name="WidthTextBox"
          Margin="0,5,0,15"

@@ -20,9 +20,11 @@ public class DisplayDeviceInfo
     {
         get
         {
-            string primaryText = IsPrimary ? " principal" : string.Empty;
+            string screenName = IsPrimary
+                ? "Écran principal"
+                : "Écran secondaire";
 
-            return $"{WindowsName}{primaryText} — {Width}×{Height} @ {Frequency} Hz";
+            return $"{screenName} — {Width} × {Height} @ {Frequency} Hz";
         }
     }
 }
