@@ -6,5 +6,7 @@ public enum NvApiStatus
 
     // Valeur interne utilisée lorsque la fonction NVAPI
     // n'a pas pu être récupérée.
-    NotAvailable = -1
+    NotAvailable = -1,
+
+    NvidiaDeviceNotFound = -6
 }

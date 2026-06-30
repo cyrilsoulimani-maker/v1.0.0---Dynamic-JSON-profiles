@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace DisplaySwitcher.Services.Nvidia;
 
@@ -10,6 +11,13 @@ public static class NvApi
     private const uint NvApiInitializeId = 0x0150E828;
 
     private delegate int NvApiInitializeDelegate();
+
+    private const int NvApiMaxPhysicalGpus = 64;
+    private const uint NvApiEnumPhysicalGpusId = 0xE5AC921F;
+
+    private delegate NvApiStatus NvApiEnumPhysicalGpusDelegate(
+    [Out] IntPtr[] gpuHandles,
+    out int gpuCount);
 
     [DllImport(NvApiDll, EntryPoint = "nvapi_QueryInterface", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr QueryInterface(uint functionId);
@@ -47,5 +55,29 @@ public static class NvApi
             Marshal.GetDelegateForFunctionPointer<NvApiInitializeDelegate>(initializePointer);
 
         return (NvApiStatus)initialize();
+    }
+
+    public static NvApiStatus EnumPhysicalGpus(out IntPtr[] gpuHandles)
+    {
+        gpuHandles = new IntPtr[NvApiMaxPhysicalGpus];
+
+        IntPtr functionPointer = QueryInterface(NvApiEnumPhysicalGpusId);
+
+        if (functionPointer == IntPtr.Zero)
+            return NvApiStatus.NotAvailable;
+
+        var enumPhysicalGpus =
+            Marshal.GetDelegateForFunctionPointer<NvApiEnumPhysicalGpusDelegate>(functionPointer);
+
+        NvApiStatus status = enumPhysicalGpus(gpuHandles, out int gpuCount);
+
+        if (status != NvApiStatus.Ok)
+        {
+            gpuHandles = Array.Empty<IntPtr>();
+            return status;
+        }
+
+        gpuHandles = gpuHandles.Take(gpuCount).ToArray();
+        return NvApiStatus.Ok;
     }
 }

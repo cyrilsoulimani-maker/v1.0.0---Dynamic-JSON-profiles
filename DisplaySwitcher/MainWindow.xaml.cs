@@ -21,6 +21,11 @@ namespace DisplaySwitcher
 
             _gpuVendor = new GpuDetectionService().DetectGpu();
 
+            var status = NvApi.EnumPhysicalGpus(out var gpuHandles);
+
+            System.Windows.MessageBox.Show(
+                $"EnumPhysicalGpus : {status}\nGPU trouvés : {gpuHandles.Length}");
+
             LoadProfiles();
 
             _trayIconService = new TrayIconService(Profiles);
