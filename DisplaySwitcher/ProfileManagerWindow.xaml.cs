@@ -10,6 +10,7 @@ namespace DisplaySwitcher
     public partial class ProfileManagerWindow : Window
     {
         public ObservableCollection<DisplayProfile> Profiles { get; }
+        public ObservableCollection<DisplayModeInfo> AvailableModes { get; } = new();
         public ObservableCollection<DisplayDeviceInfo> Displays { get; } = new();
 
         public ProfileManagerWindow(ObservableCollection<DisplayProfile> profiles)

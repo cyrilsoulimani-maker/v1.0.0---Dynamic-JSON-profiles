@@ -28,7 +28,6 @@
          Text="{Binding SelectedItem.Name, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
             <TextBlock Text="Écran" Margin="0,8,0,4" />
-
             <ComboBox
     ItemsSource="{Binding Displays}"
     DisplayMemberPath="DisplayName"
