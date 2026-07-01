@@ -14,17 +14,19 @@ public class DisplayDeviceInfo
 
     public int Frequency { get; init; }
 
+    public string FriendlyName { get; init; } = string.Empty;
+
     public NvidiaDisplay? NvidiaDisplay { get; init; }
 
     public string DisplayName
     {
         get
         {
-            string screenName = IsPrimary
-                ? "Écran principal"
-                : "Écran secondaire";
+            string name = string.IsNullOrWhiteSpace(FriendlyName)
+                ? (IsPrimary ? "Écran principal" : "Écran secondaire")
+                : FriendlyName;
 
-            return $"{screenName} — {Width} × {Height} @ {Frequency} Hz";
+            return $"{name} — {Width} × {Height} @ {Frequency} Hz";
         }
     }
 }

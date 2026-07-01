@@ -353,3 +353,14 @@ En revanche :
 ✅ Un outil d'optimisation de l'environnement d'affichage.
 ✅ Une interface simple pour des réglages avancés.
 ✅ Un logiciel pensé pour les utilisateurs exigeants.
+
+# Composants DisplaySwitcher
+
+- DsCard ✅
+- DsButton 🚧
+- DsPrimaryButton 🚧
+- DsRadioButton ✅
+- DsTextBox ⏳
+- DsComboBox ⏳
+- DsCheckBox ⏳
+- DsListBox ⏳

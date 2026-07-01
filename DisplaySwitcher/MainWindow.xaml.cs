@@ -41,6 +41,7 @@ namespace DisplaySwitcher
 
             RefreshCurrentResolutionText();
             SelectActiveProfile();
+            RefreshCurrentProfileCard();
         }
 
         private void LoadProfiles()
@@ -85,6 +86,7 @@ namespace DisplaySwitcher
             if (success)
             {
                 RefreshCurrentResolutionText();
+                RefreshCurrentProfileCard();
                 _trayIconService.RefreshContextMenu();
             }
             else
@@ -137,6 +139,23 @@ namespace DisplaySwitcher
             window.ShowDialog();
         }
 
+        private void RefreshCurrentProfileCard()
+        {
+            DisplayProfile? activeProfile =
+                Profiles.FirstOrDefault(profile => profile.IsSelected);
+
+            if (activeProfile != null)
+            {
+                CurrentProfileStatusText.Text = "● Profil actif";
+                CurrentProfileNameText.Text = activeProfile.Name;
+            }
+            else
+            {
+                CurrentProfileStatusText.Text = "● Aucun profil correspondant";
+                CurrentProfileNameText.Text = "Configuration personnalisée";
+            }
+        }
+
         protected override void OnStateChanged(EventArgs e)
         {
             base.OnStateChanged(e);
@@ -145,6 +164,8 @@ namespace DisplaySwitcher
             {
                 Hide();
             }
+
         }
+
     }
 }

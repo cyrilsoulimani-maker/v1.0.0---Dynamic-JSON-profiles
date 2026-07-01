@@ -56,7 +56,7 @@
 
             <!-- PROFILS -->
             <Border Grid.Column="0"
-                    Style="{StaticResource Card}">
+                    Style="{StaticResource DsCard}">
 
                 <DockPanel>
 
@@ -68,7 +68,7 @@
 
                     <Button DockPanel.Dock="Bottom"
         x:Name="ApplyButton"
-        Style="{StaticResource PrimaryButton}"
+        Style="{StaticResource DsPrimaryButton}"
         Content="APPLIQUER"
         Height="52"
         FontSize="18"
@@ -112,13 +112,23 @@
             <StackPanel Grid.Column="2">
 
                 <!-- CURRENT STATE -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource DsCard}">
                     <StackPanel>
 
                         <TextBlock Text="ÉTAT ACTUEL"
                                    FontSize="16"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,12"/>
+
+                        <TextBlock x:Name="CurrentProfileStatusText"
+                                  FontSize="13"
+                                  FontWeight="SemiBold"
+                                  Foreground="{StaticResource Ds.Accent}"/>
+
+                        <TextBlock x:Name="CurrentProfileNameText"
+                                  FontSize="18"
+                                  FontWeight="Bold"
+                                  Margin="0,2,0,16"/>
 
                         <TextBlock Text="Écran principal"
                                    FontSize="18"
@@ -133,7 +143,7 @@
                 </Border>
 
                 <!-- TOOLS -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource DsCard}">
                     <StackPanel>
 
                         <TextBlock Text="OUTILS"
@@ -141,7 +151,8 @@
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,12"/>
 
-                        <Button Content="Gérer les profils"
+                        <Button Style="{StaticResource DsButton}"
+                                Content="Gérer les profils"
                                 Height="42"
                                 Click="ManageProfilesButton_Click"/>
 

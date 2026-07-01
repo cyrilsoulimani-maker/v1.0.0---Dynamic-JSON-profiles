@@ -15,7 +15,7 @@
 
         <Border
     Grid.Column="0"
-    Style="{StaticResource Card}"
+    Style="{StaticResource DsCard}"
     Margin="0,0,20,0">
 
             <DockPanel>
@@ -40,7 +40,7 @@
 
         <StackPanel Grid.Column="1">
 
-            <Border Style="{StaticResource Card}">
+            <Border Style="{StaticResource DsCard}">
 
                 <StackPanel>
 
@@ -64,7 +64,7 @@
 
             </Border>
 
-            <Border Style="{StaticResource Card}">
+            <Border Style="{StaticResource DsCard}">
                 <StackPanel>
 
                     <TextBlock
@@ -94,7 +94,7 @@
                 </StackPanel>
             </Border>
 
-            <Border Style="{StaticResource Card}">
+            <Border Style="{StaticResource DsCard}">
                 <StackPanel>
 
                     <TextBlock

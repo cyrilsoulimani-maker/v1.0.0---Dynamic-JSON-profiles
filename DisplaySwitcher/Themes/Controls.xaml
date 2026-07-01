@@ -24,7 +24,7 @@
     <!-- DisplaySwitcher Card -->
     <!-- ========================= -->
 
-    <Style x:Key="Card"
+    <Style x:Key="DsCard"
        TargetType="Border">
 
         <Setter Property="Background"
@@ -109,38 +109,61 @@
             Value="8,4"/>
     </Style>
 
-    <Style TargetType="Button">
-        <Setter Property="Background"
-            Value="{StaticResource Ds.Panel}"/>
+    <Style x:Key="DsButton"
+       TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource Ds.Panel}"/>
+        <Setter Property="Foreground" Value="{StaticResource Ds.Text}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Ds.Border}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="14,8"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
 
-        <Setter Property="Foreground"
-            Value="{StaticResource Ds.Text}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="8"
+                        Padding="{TemplateBinding Padding}">
+                        <ContentPresenter
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+                    </Border>
 
-        <Setter Property="BorderBrush"
-            Value="{StaticResource Ds.Border}"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root"
+                                Property="BorderBrush"
+                                Value="{StaticResource Ds.Accent}"/>
+                        </Trigger>
 
-        <Setter Property="BorderThickness"
-            Value="1"/>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root"
+                                Property="Opacity"
+                                Value="0.85"/>
+                        </Trigger>
 
-        <Setter Property="Padding"
-            Value="12,6"/>
-
-        <Setter Property="FontWeight"
-            Value="SemiBold"/>
-
-        <Setter Property="Cursor"
-            Value="Hand"/>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root"
+                                Property="Opacity"
+                                Value="0.45"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <Style x:Key="PrimaryButton"
+    <Style x:Key="DsPrimaryButton"
        TargetType="Button"
-       BasedOn="{StaticResource {x:Type Button}}">
+       BasedOn="{StaticResource DsButton}">
         <Setter Property="Background"
             Value="{StaticResource Ds.Accent}"/>
-
         <Setter Property="Foreground"
             Value="{StaticResource Ds.Background}"/>
-
         <Setter Property="BorderBrush"
             Value="{StaticResource Ds.Accent}"/>
     </Style>
