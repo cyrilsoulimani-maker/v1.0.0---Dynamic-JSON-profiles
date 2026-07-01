@@ -4,6 +4,9 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Layout.xaml"/>
+        <ResourceDictionary Source="Buttons.xaml"/>
+        <ResourceDictionary Source="Inputs.xaml"/>
+        <ResourceDictionary Source="Selection.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <!-- ========================= -->
@@ -32,62 +35,7 @@
     <!-- Boutons -->
     <!-- ========================= -->
 
-    <Style x:Key="DsButton" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource Ds.Panel}"/>
-        <Setter Property="Foreground" Value="{StaticResource Ds.Text}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Ds.Border}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="14,8"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Cursor" Value="Hand"/>
 
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8"
-                            Padding="{TemplateBinding Padding}">
-
-                        <ContentPresenter
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"/>
-
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root"
-                                    Property="BorderBrush"
-                                    Value="{StaticResource Ds.Accent}"/>
-                        </Trigger>
-
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Root"
-                                    Property="Opacity"
-                                    Value="0.85"/>
-                        </Trigger>
-
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Root"
-                                    Property="Opacity"
-                                    Value="0.45"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="DsPrimaryButton"
-           TargetType="Button"
-           BasedOn="{StaticResource DsButton}">
-        <Setter Property="Background" Value="{StaticResource Ds.Accent}"/>
-        <Setter Property="Foreground" Value="{StaticResource Ds.Background}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Ds.Accent}"/>
-    </Style>
 
 
     <!-- ========================= -->
