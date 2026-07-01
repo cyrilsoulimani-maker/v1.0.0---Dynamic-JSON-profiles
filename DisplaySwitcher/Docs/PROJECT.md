@@ -300,3 +300,17 @@ Principes :
 - Le mode personnalisé est réservé aux résolutions non disponibles.
 - Les écrans sont sélectionnés avant les modes.
 
+## Vision à long terme
+
+DisplaySwitcher n'est pas uniquement un changeur de résolution.
+
+L'objectif est de devenir un gestionnaire de profils d'affichage et d'environnement permettant de restaurer automatiquement une configuration optimale selon le contexte d'utilisation.
+
+Les profils pourront, à terme, inclure :
+
+- paramètres d'affichage ;
+- paramètres GPU (selon les API disponibles) ;
+- paramètres Windows ;
+- automatisations ;
+- lancement d'applications.
+
