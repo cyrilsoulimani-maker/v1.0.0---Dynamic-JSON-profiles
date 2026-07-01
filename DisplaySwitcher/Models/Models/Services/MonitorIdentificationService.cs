@@ -6,6 +6,7 @@ public class MonitorIdentificationService
 {
     public MonitorIdentity GetIdentity(string windowsDisplayName)
     {
-        return new MonitorIdentity();
+        // TODO : Implémentation WMI
+        return MonitorIdentity.Unknown;
     }
 }
