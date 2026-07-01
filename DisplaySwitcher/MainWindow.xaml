@@ -67,12 +67,13 @@
                                Margin="0,0,0,16"/>
 
                     <Button DockPanel.Dock="Bottom"
-                            x:Name="ApplyButton"
-                            Content="APPLIQUER"
-                            Height="52"
-                            FontSize="18"
-                            Margin="0,20,0,0"
-                            Click="ApplyButton_Click"/>
+        x:Name="ApplyButton"
+        Style="{StaticResource PrimaryButton}"
+        Content="APPLIQUER"
+        Height="52"
+        FontSize="18"
+        Margin="0,20,0,0"
+        Click="ApplyButton_Click"/>
 
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <ItemsControl x:Name="ProfilesItemsControl"

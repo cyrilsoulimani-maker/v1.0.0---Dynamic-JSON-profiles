@@ -8,5 +8,6 @@
     <SolidColorBrush x:Key="Ds.Text" Color="#F2F2F2"/>
     <SolidColorBrush x:Key="Ds.TextSecondary" Color="#BDBDBD"/>
     <SolidColorBrush x:Key="Ds.Border" Color="#2A2A2A"/>
+    <SolidColorBrush x:Key="Ds.AccentSubtle" Color="#203A18"/>
 
 </ResourceDictionary>
