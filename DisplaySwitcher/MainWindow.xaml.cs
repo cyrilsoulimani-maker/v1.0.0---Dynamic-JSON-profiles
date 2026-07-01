@@ -21,6 +21,8 @@ namespace DisplaySwitcher
 
             LoadProfiles();
 
+            new DisplayEnumerationService().DumpMonitors();
+
             _trayIconService = new TrayIconService(Profiles);
 
             _trayIconService.OpenRequested += () =>

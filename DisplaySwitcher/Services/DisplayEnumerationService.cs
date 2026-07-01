@@ -1,7 +1,9 @@
 ﻿using DisplaySwitcher.Models;
 using System.Windows.Forms;
+using System.Management;
 
 namespace DisplaySwitcher.Services;
+
 
 public class DisplayEnumerationService
 {
@@ -25,4 +27,17 @@ public class DisplayEnumerationService
 
         return displays;
     }
+    public void DumpMonitors()
+    {
+        using ManagementObjectSearcher searcher =
+            new("SELECT * FROM Win32_DesktopMonitor");
+
+        foreach (ManagementObject monitor in searcher.Get())
+        {
+            string? name = monitor["Name"]?.ToString();
+
+            System.Diagnostics.Debug.WriteLine(name);
+        }
+    }
 }
+
