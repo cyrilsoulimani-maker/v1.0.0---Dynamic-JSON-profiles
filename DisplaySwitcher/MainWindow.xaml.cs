@@ -35,18 +35,7 @@ namespace DisplaySwitcher
                 ApplyProfile(profile);
             };
 
-            _trayIconService.ManageProfilesRequested += () =>
-            {
-                ProfileManagerWindow window = new ProfileManagerWindow(Profiles);
-                window.Owner = this;
-
-                window.ProfilesSaved += () =>
-                {
-                    _trayIconService.RefreshContextMenu();
-                };
-
-                window.ShowDialog();
-            };
+            _trayIconService.ManageProfilesRequested += OpenProfileManager;
 
             DataContext = this;
 
@@ -130,6 +119,22 @@ namespace DisplaySwitcher
 
                 activeProfile.IsSelected = true;
             }
+        }
+        private void ManageProfilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenProfileManager();
+        }
+        private void OpenProfileManager()
+        {
+            ProfileManagerWindow window = new ProfileManagerWindow(Profiles);
+            window.Owner = this;
+
+            window.ProfilesSaved += () =>
+            {
+                _trayIconService.RefreshContextMenu();
+            };
+
+            window.ShowDialog();
         }
 
         protected override void OnStateChanged(EventArgs e)
