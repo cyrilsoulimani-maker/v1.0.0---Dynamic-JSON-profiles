@@ -5,7 +5,7 @@
         Height="500"
         Width="700"
         WindowStartupLocation="CenterOwner"
-        Background="#181818">
+        Background="{StaticResource Ds.Background}">
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
