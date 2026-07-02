@@ -32,4 +32,25 @@
         <Setter Property="Margin" Value="0,0,0,16"/>
     </Style>
 
+    <!-- ======================================== -->
+    <!-- Lists -->
+    <!-- ======================================== -->
+
+    <!-- DsListBox -->
+
+    <Style TargetType="ListBox">
+        <Setter Property="Background" Value="{StaticResource Ds.Panel}"/>
+        <Setter Property="Foreground" Value="{StaticResource Ds.Text}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Ds.Border}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- DsListBoxItem -->
+
+    <Style TargetType="ListBoxItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource Ds.Text}"/>
+        <Setter Property="Padding" Value="8,4"/>
+    </Style>
+
 </ResourceDictionary>
