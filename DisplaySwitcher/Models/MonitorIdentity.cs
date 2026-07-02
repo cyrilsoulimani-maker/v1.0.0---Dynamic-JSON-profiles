@@ -20,4 +20,6 @@ public class MonitorIdentity
 
     public string InstanceName { get; init; } = string.Empty;
 
+    public string MonitorUid { get; init; } = string.Empty;
+
 }

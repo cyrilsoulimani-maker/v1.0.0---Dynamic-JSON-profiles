@@ -48,3 +48,17 @@ Responsable de l'identification des moniteurs physiques :
 - fabricant ;
 - modèle ;
 - numéro de série (à terme).
+
+## Principes de développement
+
+### 🧱 Une brique à la fois
+Une seule responsabilité par étape. Chaque étape doit compiler et être testée avant de passer à la suivante.
+
+### 💡 D'abord l'idée, ensuite le code
+Comprendre le problème avant de chercher à l'implémenter.
+
+### 🧪 On expérimente ailleurs, on intègre ici
+Les expérimentations sont réalisées dans un projet Sandbox. Le projet principal reste toujours stable.
+
+### 💾 Une brique stable = un commit
+Chaque étape fonctionnelle est sécurisée par un commit Git.

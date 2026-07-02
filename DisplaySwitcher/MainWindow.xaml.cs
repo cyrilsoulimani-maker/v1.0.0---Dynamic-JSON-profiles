@@ -174,6 +174,12 @@ namespace DisplaySwitcher
                 CurrentProfileNameText.Text = "Configuration personnalisée";
             }
         }
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshCurrentResolutionText();
+            SelectActiveProfile();
+            RefreshCurrentProfileCard();
+        }
 
         protected override void OnStateChanged(EventArgs e)
         {

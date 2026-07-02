@@ -117,10 +117,32 @@
                         Margin="0">
 
                     <StackPanel>
-                        <TextBlock Text="ÉTAT ACTUEL"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,16"/>
+                        <Grid Margin="0,0,0,12">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Text="ÉTAT ACTUEL"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"/>
+
+                            <Button Grid.Column="1"
+                                     Style="{StaticResource DsButton}"
+                                     Content="↻"
+                                     Width="32"
+                                     Height="32"
+                                     Click="RefreshButton_Click"
+                                     Padding="0"/>
+
+                        </Grid>
+
+                        <TextBlock Text="🟢 Synchronisé avec Windows"
+                                   FontSize="13"
+                                   Foreground="{StaticResource Ds.Success}"
+                                   Margin="0,0,0,20"/>
 
                         <TextBlock x:Name="CurrentProfileStatusText"
                                    FontSize="13"
@@ -141,14 +163,72 @@
                                    FontWeight="SemiBold"
                                    Margin="0,4,0,16"/>
 
-                        <TextBlock Text="Résolution"
-                                   FontSize="14"
-                                   Foreground="{StaticResource Ds.TextSecondary}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <TextBlock x:Name="CurrentResolutionText"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"
-                                   Margin="0,4,0,0"/>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0"
+               Grid.Column="0"
+               Text="Résolution"
+               FontSize="14"
+               Foreground="{StaticResource Ds.TextSecondary}"/>
+
+                            <TextBlock Grid.Row="0"
+               Grid.Column="2"
+               x:Name="CurrentResolutionText"
+               FontSize="14"
+               FontWeight="SemiBold"/>
+
+                            <TextBlock Grid.Row="1"
+               Grid.Column="0"
+               Text="Fabricant"
+               FontSize="14"
+               Foreground="{StaticResource Ds.TextSecondary}"
+               Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="1"
+               Grid.Column="2"
+               Text="—"
+               FontSize="14"
+               Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="2"
+               Grid.Column="0"
+               Text="Connexion"
+               FontSize="14"
+               Foreground="{StaticResource Ds.TextSecondary}"
+               Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="2"
+               Grid.Column="2"
+               Text="—"
+               FontSize="14"
+               Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="3"
+               Grid.Column="0"
+               Text="HDR"
+               FontSize="14"
+               Foreground="{StaticResource Ds.TextSecondary}"
+               Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="3"
+               Grid.Column="2"
+               Text="—"
+               FontSize="14"
+               Margin="0,8,0,0"/>
+                        </Grid>
+
                     </StackPanel>
                 </Border>
 

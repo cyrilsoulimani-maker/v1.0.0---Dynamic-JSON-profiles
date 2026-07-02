@@ -7,4 +7,6 @@ public class DisplayConfigMonitor
     public string DevicePath { get; init; } = string.Empty;
 
     public string FriendlyName { get; init; } = string.Empty;
+
+    public string MonitorUid { get; init; } = string.Empty;
 }

@@ -11,6 +11,8 @@
     <SolidColorBrush x:Key="Ds.AccentSubtle" Color="#203A18"/>
     <SolidColorBrush x:Key="Ds.AccentHover"
                  Color="#6ED645"/>
+    <SolidColorBrush x:Key="Ds.Success"
+                 Color="#4CAF50"/>
 
     <SolidColorBrush x:Key="Ds.PanelHover"
                  Color="#232323"/>

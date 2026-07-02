@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="DisplayConfigExplorer/DisplayConfigExplorer.csproj" Id="4009619d-eede-4255-8529-d43724345481" />
   <Project Path="DisplaySwitcher/DisplaySwitcher.csproj" />
 </Solution>

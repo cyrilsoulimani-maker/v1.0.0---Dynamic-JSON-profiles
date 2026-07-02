@@ -80,6 +80,7 @@ Product  : {productCode}
             foreach (ManagementObject monitor in searcher.Get())
             {
                 string instanceName = monitor["InstanceName"]?.ToString() ?? string.Empty;
+                string monitorUid = GetMonitorUid(instanceName);
                 string friendlyName = DecodeWmiString(monitor["UserFriendlyName"]);
                 string manufacturer = DecodeWmiString(monitor["ManufacturerName"]);
                 string model = DecodeWmiString(monitor["ProductCodeID"]);
@@ -95,6 +96,7 @@ Product  : {productCode}
                     Manufacturer = manufacturer,
                     Model = model,
                     InstanceName = instanceName,
+                    MonitorUid = monitorUid,
                     SerialNumber = serialNumber
                 });
             }
@@ -141,5 +143,22 @@ Product  : {productCode}
         }
 
         return builder.ToString().Trim();
+    }
+    private static string GetMonitorUid(string instanceName)
+    {
+        if (string.IsNullOrWhiteSpace(instanceName))
+            return string.Empty;
+
+        int uidIndex = instanceName.IndexOf("UID", StringComparison.OrdinalIgnoreCase);
+
+        if (uidIndex < 0)
+            return string.Empty;
+
+        int endIndex = instanceName.IndexOf('_', uidIndex);
+
+        if (endIndex < 0)
+            return instanceName[uidIndex..];
+
+        return instanceName[uidIndex..endIndex];
     }
 }
