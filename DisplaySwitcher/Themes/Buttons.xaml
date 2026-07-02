@@ -36,8 +36,8 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Root"
-                                    Property="BorderBrush"
-                                    Value="{StaticResource Ds.Accent}"/>
+                                 Property="BorderBrush"
+                                 Value="{StaticResource Ds.BorderFocus}"/>
                         </Trigger>
 
                         <Trigger Property="IsPressed" Value="True">
@@ -65,6 +65,7 @@
         <Setter Property="Background" Value="{StaticResource Ds.Accent}"/>
         <Setter Property="Foreground" Value="{StaticResource Ds.Background}"/>
         <Setter Property="BorderBrush" Value="{StaticResource Ds.Accent}"/>
+        
     </Style>
 
 </ResourceDictionary>

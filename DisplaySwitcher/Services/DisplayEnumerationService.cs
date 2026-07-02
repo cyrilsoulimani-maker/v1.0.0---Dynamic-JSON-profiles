@@ -9,15 +9,22 @@ public class DisplayEnumerationService
 {
     public List<DisplayDeviceInfo> GetDisplays()
     {
+        MonitorIdentificationService monitorIdentificationService = new();
         List<DisplayDeviceInfo> displays = new();
 
         foreach (Screen screen in Screen.AllScreens)
         {
             var currentMode = DisplayService.GetCurrentMode(screen.DeviceName);
 
+            MonitorIdentity identity =
+            monitorIdentificationService.GetIdentity(screen.DeviceName);
+
             displays.Add(new DisplayDeviceInfo
             {
                 WindowsName = screen.DeviceName,
+                FriendlyName = identity.IsDetected
+                ? identity.FriendlyName
+                : screen.Primary ? "Écran principal" : "Écran secondaire",
                 IsPrimary = screen.Primary,
                 Width = currentMode.Width,
                 Height = currentMode.Height,

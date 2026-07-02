@@ -2,6 +2,8 @@
 using DisplaySwitcher.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Linq;
+using System.IO;
 
 
 namespace DisplaySwitcher
@@ -15,6 +17,13 @@ namespace DisplaySwitcher
 
         public MainWindow()
         {
+            MonitorIdentificationService service = new();
+
+            service.DumpMonitors(
+                Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                    "DisplaySwitcher_Monitors_v2.txt"));
+
             InitializeComponent();
 
             _gpuVendor = new GpuDetectionService().DetectGpu();
@@ -101,8 +110,16 @@ namespace DisplaySwitcher
         {
             var mode = DisplayService.GetCurrentMode();
 
+            DisplayEnumerationService displayEnumerationService = new();
+            DisplayDeviceInfo? primaryDisplay =
+                displayEnumerationService.GetDisplays()
+                    .FirstOrDefault(display => display.IsPrimary);
+
+            CurrentDisplayNameText.Text =
+                primaryDisplay?.FriendlyName ?? "Écran principal";
+
             CurrentResolutionText.Text =
-                $"Résolution actuelle : {mode.Width} × {mode.Height} @ {mode.Frequency} Hz";
+                $"{mode.Width} × {mode.Height} @ {mode.Frequency} Hz";
         }
 
         private void SelectActiveProfile()

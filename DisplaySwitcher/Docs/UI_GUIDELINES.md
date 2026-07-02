@@ -390,3 +390,42 @@ Status : 🚧 À développer
 
 ## DsListBox
 Status : 🚧 À améliorer
+
+# DisplaySwitcher Design System
+
+## Status
+
+| Component | Status |
+|-----------|--------|
+| DsCard | ✅ Stable |
+| DsButton | ✅ Stable |
+| DsPrimaryButton | ✅ Stable |
+| DsRadioButton | ✅ Stable |
+| DsCheckBox | ✅ Stable |
+| DsTextBox | ✅ Stable |
+| DsComboBox | 🚧 In Progress |
+| DsListBox | 🚧 Basic |
+| DsScrollViewer | ⏳ Planned |
+
+## Design Tokens
+
+### Colors
+
+- Ds.Background
+- Ds.Panel
+- Ds.Accent
+- Ds.Border
+- Ds.BorderHover
+- Ds.BorderFocus
+
+### Radius
+
+- Ds.Corner.Small
+- Ds.Corner.Medium
+- Ds.Corner.Large
+
+### Popup
+
+- Ds.PopupBackground
+- Ds.ItemHover
+- Ds.ItemSelected

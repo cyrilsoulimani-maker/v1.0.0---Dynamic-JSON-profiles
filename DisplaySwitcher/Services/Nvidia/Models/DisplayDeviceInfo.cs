@@ -29,4 +29,5 @@ public class DisplayDeviceInfo
             return $"{name} — {Width} × {Height} @ {Frequency} Hz";
         }
     }
+
 }

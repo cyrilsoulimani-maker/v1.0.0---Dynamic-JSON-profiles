@@ -14,11 +14,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- HEADER -->
         <DockPanel Margin="0,0,0,24">
-
             <Border Width="52"
                     Height="52"
                     CornerRadius="12"
@@ -34,6 +34,12 @@
                            VerticalAlignment="Center"/>
             </Border>
 
+            <TextBlock Text="v0.4"
+                       DockPanel.Dock="Right"
+                       Foreground="{StaticResource Ds.TextSecondary}"
+                       VerticalAlignment="Center"
+                       FontSize="14"/>
+
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="DisplaySwitcher"
                            FontSize="30"
@@ -43,49 +49,42 @@
                            Foreground="{StaticResource Ds.TextSecondary}"
                            FontSize="14"/>
             </StackPanel>
-
         </DockPanel>
 
-        <!-- CONTENT -->
+        <!-- MAIN CONTENT -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1.25*"/>
                 <ColumnDefinition Width="24"/>
-                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- PROFILS -->
+            <!-- LEFT : PROFILS -->
             <Border Grid.Column="0"
-                    Style="{StaticResource DsCard}">
+                    Style="{StaticResource DsCard}" Grid.ColumnSpan="2" Margin="0,0,24,0">
 
-                <DockPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                             Text="PROFIL À APPLIQUER"
+                             FontSize="16"
+                             FontWeight="SemiBold"
+                             Margin="0,0,0,16"/>
 
-                    <TextBlock DockPanel.Dock="Top"
-                               Text="PROFIL À APPLIQUER"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,16"/>
-
-                    <Button DockPanel.Dock="Bottom"
-        x:Name="ApplyButton"
-        Style="{StaticResource DsPrimaryButton}"
-        Content="APPLIQUER"
-        Height="52"
-        FontSize="18"
-        Margin="0,20,0,0"
-        Click="ApplyButton_Click"/>
-
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Auto">
                         <ItemsControl x:Name="ProfilesItemsControl"
                                       ItemsSource="{Binding Profiles}">
-
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <RadioButton FontSize="18"
-                                                 Margin="0,8"
+                                                 Margin="0,6"
                                                  GroupName="DisplayProfiles"
                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}">
-
                                         <TextBlock>
                                             <Run Text="{Binding Name}"/>
                                             <Run Text=" — "/>
@@ -96,56 +95,69 @@
                                             <Run Text="{Binding Frequency}"/>
                                             <Run Text=" Hz"/>
                                         </TextBlock>
-
                                     </RadioButton>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
-
                         </ItemsControl>
                     </ScrollViewer>
-
-                </DockPanel>
-
+                </Grid>
             </Border>
 
-            <!-- RIGHT COLUMN -->
-            <StackPanel Grid.Column="2">
+            <!-- RIGHT : HARDWARE / TOOLS -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <!-- CURRENT STATE -->
-                <Border Style="{StaticResource DsCard}">
+                <!-- ETAT ACTUEL -->
+                <Border Grid.Row="0"
+                        Style="{StaticResource DsCard}"
+                        Margin="0">
+
                     <StackPanel>
-
                         <TextBlock Text="ÉTAT ACTUEL"
                                    FontSize="16"
                                    FontWeight="SemiBold"
-                                   Margin="0,0,0,12"/>
+                                   Margin="0,0,0,16"/>
 
                         <TextBlock x:Name="CurrentProfileStatusText"
-                                  FontSize="13"
-                                  FontWeight="SemiBold"
-                                  Foreground="{StaticResource Ds.Accent}"/>
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource Ds.Accent}"/>
 
                         <TextBlock x:Name="CurrentProfileNameText"
-                                  FontSize="18"
-                                  FontWeight="Bold"
-                                  Margin="0,2,0,16"/>
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Margin="0,2,0,24"/>
 
-                        <TextBlock Text="Écran principal"
+                        <TextBlock Text="Écran"
+                                   FontSize="14"
+                                   Foreground="{StaticResource Ds.TextSecondary}"/>
+
+                        <TextBlock x:Name="CurrentDisplayNameText"
                                    FontSize="18"
-                                   FontWeight="SemiBold"/>
+                                   FontWeight="SemiBold"
+                                   Margin="0,4,0,16"/>
+
+                        <TextBlock Text="Résolution"
+                                   FontSize="14"
+                                   Foreground="{StaticResource Ds.TextSecondary}"/>
 
                         <TextBlock x:Name="CurrentResolutionText"
-                                   FontSize="15"
-                                   Foreground="{StaticResource Ds.TextSecondary}"
-                                   Margin="0,8,0,0"/>
-
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <!-- TOOLS -->
-                <Border Style="{StaticResource DsCard}">
-                    <StackPanel>
+                <!-- OUTILS -->
+                <Border Grid.Row="2"
+                        Style="{StaticResource DsCard}"
+                        Margin="0">
 
+                    <StackPanel>
                         <TextBlock Text="OUTILS"
                                    FontSize="16"
                                    FontWeight="SemiBold"
@@ -153,14 +165,21 @@
 
                         <Button Style="{StaticResource DsButton}"
                                 Content="Gérer les profils"
-                                Height="42"
+                                Height="44"
                                 Click="ManageProfilesButton_Click"/>
-
                     </StackPanel>
                 </Border>
-
-            </StackPanel>
-
+            </Grid>
         </Grid>
+
+        <!-- FOOTER ACTION -->
+        <Button Grid.Row="2"
+                x:Name="ApplyButton"
+                Style="{StaticResource DsPrimaryButton}"
+                Content="APPLIQUER"
+                Height="56"
+                FontSize="18"
+                Margin="0,24,0,0"
+                Click="ApplyButton_Click"/>
     </Grid>
 </Window>

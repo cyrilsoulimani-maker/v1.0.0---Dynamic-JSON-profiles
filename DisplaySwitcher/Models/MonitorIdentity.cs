@@ -17,4 +17,7 @@ public class MonitorIdentity
     public string Model { get; init; } = string.Empty;
 
     public string SerialNumber { get; init; } = string.Empty;
+
+    public string InstanceName { get; init; } = string.Empty;
+
 }

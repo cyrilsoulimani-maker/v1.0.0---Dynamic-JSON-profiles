@@ -25,4 +25,19 @@
 
     <CornerRadius x:Key="Ds.Corner.Large">10</CornerRadius>
 
+    <!-- ======================================== -->
+    <!-- Design Tokens (migration vers Tokens.xaml) -->
+    <!-- ======================================== -->
+
+    <SolidColorBrush x:Key="Ds.PopupBackground"
+                 Color="#202020"/>
+
+    <SolidColorBrush x:Key="Ds.ItemHover"
+                 Color="#2B2B2B"/>
+
+    <SolidColorBrush x:Key="Ds.ItemSelected"
+                 Color="#203C1A"/>
+
+    <Thickness x:Key="Ds.BorderThickness">1</Thickness>
+
 </ResourceDictionary>
