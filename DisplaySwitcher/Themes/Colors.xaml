@@ -14,5 +14,15 @@
 
     <SolidColorBrush x:Key="Ds.PanelHover"
                  Color="#232323"/>
+    <SolidColorBrush x:Key="Ds.BorderHover"
+                 Color="#3A3A3A"/>
+
+    <SolidColorBrush x:Key="Ds.BorderFocus"
+                 Color="#5FBF3A"/>
+    <CornerRadius x:Key="Ds.Corner.Small">6</CornerRadius>
+
+    <CornerRadius x:Key="Ds.Corner.Medium">8</CornerRadius>
+
+    <CornerRadius x:Key="Ds.Corner.Large">10</CornerRadius>
 
 </ResourceDictionary>
