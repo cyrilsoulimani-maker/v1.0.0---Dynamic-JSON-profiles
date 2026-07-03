@@ -53,6 +53,7 @@ namespace DisplaySwitcher
             RefreshCurrentResolutionText();
             SelectActiveProfile();
             RefreshCurrentProfileCard();
+
         }
 
         private void LoadProfiles()
@@ -110,13 +111,14 @@ namespace DisplaySwitcher
         {
             var mode = DisplayService.GetCurrentMode();
 
-            DisplayEnumerationService displayEnumerationService = new();
-            DisplayDeviceInfo? primaryDisplay =
-                displayEnumerationService.GetDisplays()
-                    .FirstOrDefault(display => display.IsPrimary);
+            DisplayConfigService displayConfigService = new();
+
+            DisplayConfigMonitor? primaryMonitor =
+                displayConfigService.GetCurrentConfiguration()
+                    .FirstOrDefault(monitor => monitor.DeviceName == @"\\.\DISPLAY1");
 
             CurrentDisplayNameText.Text =
-                primaryDisplay?.FriendlyName ?? "Écran principal";
+                primaryMonitor?.FriendlyName ?? "Écran principal";
 
             CurrentResolutionText.Text =
                 $"{mode.Width} × {mode.Height} @ {mode.Frequency} Hz";
