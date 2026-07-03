@@ -17,7 +17,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- ========================================================= -->
         <!-- HEADER -->
+        <!-- ========================================================= -->
+
         <DockPanel Margin="0,0,0,24">
             <Border Width="52"
                     Height="52"
@@ -59,20 +62,38 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- LEFT : PROFILS -->
+            <!-- ========================================================= -->
+            <!-- CARTE : PROFIL À APPLIQUER -->
+            <!-- ========================================================= -->
+
             <Border Grid.Column="0"
-                    Style="{StaticResource DsCard}" Grid.ColumnSpan="2" Margin="0,0,24,0">
+                    Margin="0"
+        Style="{StaticResource DsCard}">
 
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock
-                             Text="PROFIL À APPLIQUER"
-                             FontSize="16"
-                             FontWeight="SemiBold"
-                             Margin="0,0,0,16"/>
+                    <Grid Margin="0,0,0,16">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+               Text="PROFIL À APPLIQUER"
+               FontSize="16"
+               FontWeight="SemiBold"/>
+
+                        <Button Grid.Column="1"
+            Style="{StaticResource DsHeaderButton}"
+            Content="⚙"
+            ToolTip="Gérer les profils"
+            Click="ManageProfilesButton_Click"/>
+
+                    </Grid>
 
                     <ScrollViewer
             Grid.Row="1"
@@ -103,40 +124,36 @@
                 </Grid>
             </Border>
 
-            <!-- RIGHT : HARDWARE / TOOLS -->
+            <!-- ========================================================= -->
+            <!-- CARTE : ÉTAT ACTUEL -->
+            <!-- ========================================================= -->
+
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="16"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- ETAT ACTUEL -->
                 <Border Grid.Row="0"
                         Style="{StaticResource DsCard}"
                         Margin="0">
 
                     <StackPanel>
                         <Grid Margin="0,0,0,12">
-
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0"
-                                       Text="ÉTAT ACTUEL"
-                                       FontSize="16"
-                                       FontWeight="SemiBold"/>
+               Text="ÉTAT ACTUEL"
+               FontSize="16"
+               FontWeight="SemiBold"
+               VerticalAlignment="Center"/>
 
                             <Button Grid.Column="1"
-                                     Style="{StaticResource DsButton}"
-                                     Content="↻"
-                                     Width="32"
-                                     Height="32"
-                                     Click="RefreshButton_Click"
-                                     Padding="0"/>
-
+            Style="{StaticResource DsHeaderButton}"
+            Content="↻"
+            Click="RefreshButton_Click"/>
                         </Grid>
 
                         <TextBlock Text="🟢 Synchronisé avec Windows"
@@ -231,28 +248,13 @@
 
                     </StackPanel>
                 </Border>
-
-                <!-- OUTILS -->
-                <Border Grid.Row="2"
-                        Style="{StaticResource DsCard}"
-                        Margin="0">
-
-                    <StackPanel>
-                        <TextBlock Text="OUTILS"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,12"/>
-
-                        <Button Style="{StaticResource DsButton}"
-                                Content="Gérer les profils"
-                                Height="44"
-                                Click="ManageProfilesButton_Click"/>
-                    </StackPanel>
-                </Border>
             </Grid>
         </Grid>
 
-        <!-- FOOTER ACTION -->
+        <!-- ========================================================= -->
+        <!-- ACTION PRINCIPALE -->
+        <!-- ========================================================= -->
+
         <Button Grid.Row="2"
                 x:Name="ApplyButton"
                 Style="{StaticResource DsPrimaryButton}"
