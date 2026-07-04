@@ -1,5 +1,7 @@
 ﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services;
+using DisplaySwitcher.Services.Nvidia;
+using DisplaySwitcher.Services.Nvidia.Interop;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -114,11 +116,87 @@ namespace DisplaySwitcher
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!TryCreateCustomResolutionIfNeeded())
+                return;
+
             ProfileService.SaveProfiles(Profiles.ToList());
 
             ProfilesSaved?.Invoke();
 
             Close();
+        }
+
+        private bool TryCreateCustomResolutionIfNeeded()
+        {
+            if (ProfilesListBox.SelectedItem is not DisplayProfile profile)
+                return true;
+
+            if (!profile.CreateCustomResolution)
+                return true;
+
+            DisplayDeviceInfo? display =
+                Displays.FirstOrDefault(display =>
+                    display.WindowsName == profile.DisplayDeviceName);
+
+            if (display?.NvidiaDisplay == null)
+            {
+                System.Windows.MessageBox.Show(
+                    "Impossible de créer la résolution personnalisée : aucun DisplayId NVIDIA n'a été trouvé pour cet écran.",
+                    "Résolution personnalisée",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            MessageBoxResult confirmation =
+                System.Windows.MessageBox.Show(
+                    $"Créer la résolution personnalisée suivante ?\n\n{profile.Width} × {profile.Height} @ {profile.Frequency} Hz",
+                    "Résolution personnalisée NVIDIA",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+            if (confirmation != MessageBoxResult.Yes)
+                return false;
+
+            System.Windows.MessageBox.Show(
+    $"Écran Windows : {display.WindowsName}\n" +
+    $"Nom : {display.DisplayName}\n" +
+    $"DisplayId NVIDIA : {display.NvidiaDisplay.DisplayId}\n" +
+    $"Connecteur : {display.NvidiaDisplay.ConnectorType}\n" +
+    $"Connecté : {display.NvidiaDisplay.IsConnected}\n" +
+    $"Actif : {display.NvidiaDisplay.IsActive}",
+    "Debug NVIDIA",
+    MessageBoxButton.OK,
+    MessageBoxImage.Information);
+
+            NvidiaCustomResolutionService customResolutionService = new();
+
+            NvApiStatus status =
+                customResolutionService.CreateCustomResolution(
+                    display.NvidiaDisplay.DisplayId,
+                    (uint)profile.Width,
+                    (uint)profile.Height,
+                    (uint)profile.Frequency);
+
+            if (status != NvApiStatus.Ok)
+            {
+                System.Windows.MessageBox.Show(
+                    $"La création de la résolution personnalisée a échoué.\n\nÉtape : {customResolutionService.LastStep}\nCode NVAPI : {status}",
+                    "Résolution personnalisée NVIDIA",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                return false;
+            }
+
+            System.Windows.MessageBox.Show(
+                "Résolution personnalisée créée avec succès.",
+                "Résolution personnalisée NVIDIA",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            return true;
         }
 
         private void NewProfileButton_Click(object sender, RoutedEventArgs e)

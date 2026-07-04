@@ -1,39 +1,59 @@
 ﻿using DisplaySwitcher.Models;
-using System.Windows.Forms;
+using DisplaySwitcher.Services.Nvidia;
+using DisplaySwitcher.Services.Nvidia.Models;
 using System.Management;
+using WinForms = System.Windows.Forms;
 
 namespace DisplaySwitcher.Services;
-
 
 public class DisplayEnumerationService
 {
     public List<DisplayDeviceInfo> GetDisplays()
     {
         MonitorIdentificationService monitorIdentificationService = new();
+        NvidiaDisplayService nvidiaDisplayService = new();
+
+        List<NvidiaDisplay> nvidiaDisplays =
+            nvidiaDisplayService
+                .GetConnectedDisplays()
+                .Where(display => display.IsConnected && display.IsActive)
+                .ToList();
+
         List<DisplayDeviceInfo> displays = new();
 
-        foreach (Screen screen in Screen.AllScreens)
+        WinForms.Screen[] screens = WinForms.Screen.AllScreens;
+
+        for (int i = 0; i < screens.Length; i++)
         {
+            WinForms.Screen screen = screens[i];
+
             var currentMode = DisplayService.GetCurrentMode(screen.DeviceName);
 
             MonitorIdentity identity =
-            monitorIdentificationService.GetIdentity(screen.DeviceName);
+                monitorIdentificationService.GetIdentity(screen.DeviceName);
+
+            NvidiaDisplay? nvidiaDisplay =
+                i < nvidiaDisplays.Count
+                    ? nvidiaDisplays[i]
+                    : null;
 
             displays.Add(new DisplayDeviceInfo
             {
                 WindowsName = screen.DeviceName,
                 FriendlyName = identity.IsDetected
-                ? identity.FriendlyName
-                : screen.Primary ? "Écran principal" : "Écran secondaire",
+                    ? identity.FriendlyName
+                    : screen.Primary ? "Écran principal" : "Écran secondaire",
                 IsPrimary = screen.Primary,
                 Width = currentMode.Width,
                 Height = currentMode.Height,
-                Frequency = currentMode.Frequency
+                Frequency = currentMode.Frequency,
+                NvidiaDisplay = nvidiaDisplay
             });
         }
 
         return displays;
     }
+
     public void DumpMonitors()
     {
         using ManagementObjectSearcher searcher =
@@ -47,4 +67,3 @@ public class DisplayEnumerationService
         }
     }
 }
-

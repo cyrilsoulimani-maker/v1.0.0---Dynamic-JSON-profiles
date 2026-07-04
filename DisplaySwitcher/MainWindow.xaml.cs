@@ -1,10 +1,9 @@
 ﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.Linq;
 using System.IO;
-
+using System.Linq;
+using System.Windows;
 
 namespace DisplaySwitcher
 {
@@ -53,7 +52,6 @@ namespace DisplaySwitcher
             RefreshCurrentResolutionText();
             SelectActiveProfile();
             RefreshCurrentProfileCard();
-
         }
 
         private void LoadProfiles()
@@ -90,7 +88,16 @@ namespace DisplaySwitcher
 
             profile.IsSelected = true;
 
+            if (string.IsNullOrWhiteSpace(profile.DisplayDeviceName))
+            {
+                System.Windows.MessageBox.Show(
+                    $"Impossible d'appliquer le profil {profile.Name} : aucun écran n'est associé à ce profil.");
+
+                return;
+            }
+
             bool success = DisplayService.SetDisplayMode(
+                profile.DisplayDeviceName,
                 profile.Width,
                 profile.Height,
                 profile.Frequency);
@@ -109,7 +116,6 @@ namespace DisplaySwitcher
 
         private void RefreshCurrentResolutionText()
         {
-
             DisplayConfigService displayConfigService = new();
 
             CurrentDisplayState? state =
@@ -148,10 +154,12 @@ namespace DisplaySwitcher
                 activeProfile.IsSelected = true;
             }
         }
+
         private void ManageProfilesButton_Click(object sender, RoutedEventArgs e)
         {
             OpenProfileManager();
         }
+
         private void OpenProfileManager()
         {
             ProfileManagerWindow window = new ProfileManagerWindow(Profiles);
@@ -181,6 +189,7 @@ namespace DisplaySwitcher
                 CurrentProfileNameText.Text = "Configuration personnalisée";
             }
         }
+
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCurrentResolutionText();
@@ -196,8 +205,6 @@ namespace DisplaySwitcher
             {
                 Hide();
             }
-
         }
-
     }
 }
