@@ -1,4 +1,5 @@
-﻿using DisplaySwitcher.Services.Edid.Models;
+﻿using DisplaySwitcher.Models;
+using DisplaySwitcher.Services.Edid.Models;
 using Microsoft.Win32;
 
 namespace DisplaySwitcher.Services.Edid;
@@ -7,6 +8,26 @@ public class EdidLocator
 {
     private const string DisplayRegistryPath =
         @"SYSTEM\CurrentControlSet\Enum\DISPLAY";
+
+    public LocatedEdid? LocateByDisplayConfigMonitor(DisplayConfigMonitor monitor)
+    {
+        if (string.IsNullOrWhiteSpace(monitor.MonitorUid))
+            return null;
+
+        string manufacturerFromDevicePath =
+            ExtractManufacturerFromDevicePath(monitor.DevicePath);
+
+        return GetLocatedEdids()
+            .FirstOrDefault(edid =>
+                string.Equals(
+                    edid.MonitorUid,
+                    monitor.MonitorUid,
+                    StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(
+                    edid.RegistryManufacturer,
+                    manufacturerFromDevicePath,
+                    StringComparison.OrdinalIgnoreCase));
+    }
 
     public IReadOnlyList<LocatedEdid> GetLocatedEdids()
     {
@@ -74,5 +95,29 @@ public class EdidLocator
             return string.Empty;
 
         return instanceName[uidIndex..];
+    }
+
+    private static string ExtractManufacturerFromDevicePath(string devicePath)
+    {
+        if (string.IsNullOrWhiteSpace(devicePath))
+            return string.Empty;
+
+        string marker = @"DISPLAY#";
+
+        int markerIndex =
+            devicePath.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+
+        if (markerIndex < 0)
+            return string.Empty;
+
+        int startIndex = markerIndex + marker.Length;
+
+        int endIndex =
+            devicePath.IndexOf('#', startIndex);
+
+        if (endIndex < 0)
+            return string.Empty;
+
+        return devicePath[startIndex..endIndex];
     }
 }

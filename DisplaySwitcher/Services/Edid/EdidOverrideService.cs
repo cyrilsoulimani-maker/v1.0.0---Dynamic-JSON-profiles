@@ -1,5 +1,6 @@
-﻿using DisplaySwitcher.Services.Edid.Models;
+﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services.Timings;
+using DisplaySwitcher.Services.Edid.Models;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -21,6 +22,9 @@ public class EdidOverrideService
 
         StringBuilder builder = new();
         EdidParser parser = new();
+
+        AppendDisplayConfigToEdid(builder);
+        AppendLocatedEdids(builder);
 
         using RegistryKey? displayRoot =
             Registry.LocalMachine.OpenSubKey(DisplayRegistryPath);
@@ -82,6 +86,69 @@ public class EdidOverrideService
 
         File.WriteAllText(outputPath, builder.ToString());
         return outputPath;
+    }
+
+    private static void AppendDisplayConfigToEdid(StringBuilder builder)
+    {
+        DisplayConfigService displayConfigService = new();
+        EdidLocator locator = new();
+
+        IReadOnlyList<DisplayConfigMonitor> monitors =
+            displayConfigService.GetCurrentConfiguration();
+
+        builder.AppendLine("========== DISPLAYCONFIG → EDID ==========");
+        builder.AppendLine($"Active monitors : {monitors.Count}");
+        builder.AppendLine();
+
+        foreach (DisplayConfigMonitor monitor in monitors)
+        {
+            LocatedEdid? locatedEdid =
+                locator.LocateByDisplayConfigMonitor(monitor);
+
+            builder.AppendLine($"Windows device       : {monitor.DeviceName}");
+            builder.AppendLine($"Friendly name        : {monitor.FriendlyName}");
+            builder.AppendLine($"Monitor UID          : {monitor.MonitorUid}");
+            builder.AppendLine($"Device path          : {monitor.DevicePath}");
+
+            if (locatedEdid == null)
+            {
+                builder.AppendLine("EDID match           : NOT FOUND");
+            }
+            else
+            {
+                builder.AppendLine("EDID match           : FOUND");
+                builder.AppendLine($"EDID display name    : {locatedEdid.DisplayName}");
+                builder.AppendLine($"Registry path        : {locatedEdid.RegistryPath}");
+                builder.AppendLine($"EDID bytes           : {locatedEdid.Edid.Length}");
+                builder.AppendLine($"Checksum valid       : {locatedEdid.Parsed.IsChecksumValid}");
+            }
+
+            builder.AppendLine();
+        }
+    }
+
+    private static void AppendLocatedEdids(StringBuilder builder)
+    {
+        EdidLocator locator = new();
+
+        IReadOnlyList<LocatedEdid> locatedEdids =
+            locator.GetLocatedEdids();
+
+        builder.AppendLine("========== LOCATED EDIDS ==========");
+        builder.AppendLine($"Count : {locatedEdids.Count}");
+        builder.AppendLine();
+
+        foreach (LocatedEdid edid in locatedEdids)
+        {
+            builder.AppendLine($"Display name          : {edid.DisplayName}");
+            builder.AppendLine($"Monitor UID           : {edid.MonitorUid}");
+            builder.AppendLine($"Registry manufacturer : {edid.RegistryManufacturer}");
+            builder.AppendLine($"Registry instance     : {edid.RegistryInstance}");
+            builder.AppendLine($"Registry path         : {edid.RegistryPath}");
+            builder.AppendLine($"EDID bytes            : {edid.Edid.Length}");
+            builder.AppendLine($"Checksum valid        : {edid.Parsed.IsChecksumValid}");
+            builder.AppendLine();
+        }
     }
 
     private static void AppendEditorDryRun(StringBuilder builder, byte[] edid)
