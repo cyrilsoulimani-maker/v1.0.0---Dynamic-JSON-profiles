@@ -109,19 +109,24 @@ namespace DisplaySwitcher
 
         private void RefreshCurrentResolutionText()
         {
-            var mode = DisplayService.GetCurrentMode();
 
             DisplayConfigService displayConfigService = new();
 
-            DisplayConfigMonitor? primaryMonitor =
-                displayConfigService.GetCurrentConfiguration()
-                    .FirstOrDefault(monitor => monitor.DeviceName == @"\\.\DISPLAY1");
+            CurrentDisplayState? state =
+                displayConfigService.GetCurrentDisplayState();
 
             CurrentDisplayNameText.Text =
-                primaryMonitor?.FriendlyName ?? "Écran principal";
+                state?.FriendlyName ?? "Écran principal";
 
-            CurrentResolutionText.Text =
-                $"{mode.Width} × {mode.Height} @ {mode.Frequency} Hz";
+            if (state != null)
+            {
+                CurrentResolutionText.Text =
+                    $"{state.Width} × {state.Height} @ {state.RefreshRate:F0} Hz";
+            }
+            else
+            {
+                CurrentResolutionText.Text = "-";
+            }
         }
 
         private void SelectActiveProfile()

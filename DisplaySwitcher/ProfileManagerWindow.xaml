@@ -15,157 +15,188 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <Border
-    Grid.Column="0"
-    Style="{StaticResource DsCard}"
-    Margin="0,0,20,0">
+        <Border Grid.Column="0"
+                Style="{StaticResource DsCard}"
+                Margin="0,0,20,0">
 
             <DockPanel>
+                <TextBlock DockPanel.Dock="Top"
+                           Text="PROFILS"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12"/>
 
-                <TextBlock
-            DockPanel.Dock="Top"
-            Text="PROFILS"
-            FontSize="16"
-            FontWeight="SemiBold"
-            Margin="0,0,0,12"/>
-
-                <ListBox
-            x:Name="ProfilesListBox"
-            DisplayMemberPath="Name"
-            FontSize="16"
-            ItemsSource="{Binding Profiles}"
-            SelectionChanged="ProfilesListBox_SelectionChanged"/>
-
+                <ListBox x:Name="ProfilesListBox"
+                         DisplayMemberPath="Name"
+                         FontSize="16"
+                         ItemsSource="{Binding Profiles}"
+                         SelectionChanged="ProfilesListBox_SelectionChanged"/>
             </DockPanel>
-
         </Border>
 
-        <StackPanel Grid.Column="1">
+        <ScrollViewer Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      CanContentScroll="False">
 
-            <Border Style="{StaticResource DsCard}">
+            <StackPanel>
 
-                <StackPanel>
+                <Border Style="{StaticResource DsCard}">
+                    <StackPanel>
+                        <TextBlock Text="PROFIL"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12"/>
 
-                    <TextBlock
-            Text="PROFIL"
-            FontSize="16"
-            FontWeight="SemiBold"
-            Margin="0,0,0,12"/>
+                        <TextBlock Text="Nom"/>
 
-                    <TextBlock Text="Nom"/>
+                        <TextBox x:Name="NameTextBox"
+                                 Margin="0,5,0,0"
+                                 Text="{Binding SelectedItem.Name,
+                                                ElementName=ProfilesListBox,
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </Border>
 
-                    <TextBox
-            x:Name="NameTextBox"
-            Margin="0,5,0,0"
-            Text="{Binding SelectedItem.Name,
-                   ElementName=ProfilesListBox,
-                   Mode=TwoWay,
-                   UpdateSourceTrigger=PropertyChanged}"/>
+                <Border Style="{StaticResource DsCard}">
+                    <StackPanel>
+                        <TextBlock Text="AFFICHAGE"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12"/>
 
+                        <TextBlock Text="Écran"/>
+
+                        <ComboBox Margin="0,5,0,12"
+                                  ItemsSource="{Binding Displays}"
+                                  SelectedValuePath="WindowsName"
+                                  SelectedValue="{Binding SelectedItem.DisplayDeviceName,
+                                                          ElementName=ProfilesListBox,
+                                                          Mode=TwoWay,
+                                                          UpdateSourceTrigger=PropertyChanged}"
+                                  MaxDropDownHeight="220"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.CanContentScroll="False"
+                                  SelectionChanged="DisplayComboBox_SelectionChanged">
+
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Text="Mode"/>
+
+                        <ComboBox x:Name="ModeComboBox"
+                                  Margin="0,5,0,0"
+                                  ItemsSource="{Binding AvailableModes}"
+                                  MaxDropDownHeight="220"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.CanContentScroll="False"
+                                  SelectionChanged="ModeComboBox_SelectionChanged">
+
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0} × {1} @ {2} Hz">
+                                                <Binding Path="Width"/>
+                                                <Binding Path="Height"/>
+                                                <Binding Path="Frequency"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource DsCard}">
+                    <StackPanel>
+                        <TextBlock Text="OPTIONS"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Largeur"/>
+                                <TextBox x:Name="WidthTextBox"
+                                         Margin="0,5,0,0"
+                                         PreviewTextInput="NumericOnly_PreviewTextInput"
+                                         Text="{Binding SelectedItem.Width,
+                                                        ElementName=ProfilesListBox,
+                                                        Mode=TwoWay,
+                                                        UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Hauteur"/>
+                                <TextBox x:Name="HeightTextBox"
+                                         Margin="0,5,0,0"
+                                         PreviewTextInput="NumericOnly_PreviewTextInput"
+                                         Text="{Binding SelectedItem.Height,
+                                                        ElementName=ProfilesListBox,
+                                                        Mode=TwoWay,
+                                                        UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Fréquence"/>
+                                <TextBox x:Name="FrequencyTextBox"
+                                         Margin="0,5,0,0"
+                                         PreviewTextInput="NumericOnly_PreviewTextInput"
+                                         Text="{Binding SelectedItem.Frequency,
+                                                        ElementName=ProfilesListBox,
+                                                        Mode=TwoWay,
+                                                        UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <CheckBox x:Name="CustomResolutionCheckBox"
+                                  Content="Créer aussi cette résolution personnalisée dans Windows"
+                                  Margin="0,16,0,0"
+                                  IsChecked="{Binding SelectedItem.CreateCustomResolution,
+                                                      ElementName=ProfilesListBox,
+                                                      Mode=TwoWay}"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,0,0,4">
+                    <Button Content="💾 Enregistrer"
+                            Style="{StaticResource DsPrimaryButton}"
+                            Width="130"
+                            Margin="0,0,10,0"
+                            Click="SaveButton_Click"/>
+
+                    <Button Content="➕ Nouveau profil"
+                            Style="{StaticResource DsButton}"
+                            Width="140"
+                            Margin="0,0,10,0"
+                            Click="NewProfileButton_Click"/>
+
+                    <Button Content="🗑 Supprimer"
+                            Style="{StaticResource DsButton}"
+                            Width="120"
+                            Click="DeleteButton_Click"/>
                 </StackPanel>
 
-            </Border>
-
-            <Border Style="{StaticResource DsCard}">
-                <StackPanel>
-
-                    <TextBlock
-            Text="AFFICHAGE"
-            FontSize="16"
-            FontWeight="SemiBold"
-            Margin="0,0,0,12"/>
-
-                    <TextBlock Text="Écran" />
-
-                    <ComboBox
-            Margin="0,5,0,12"
-            ItemsSource="{Binding Displays}"
-            DisplayMemberPath="DisplayName"
-            SelectedValuePath="WindowsName"
-            SelectedValue="{Binding SelectedItem.DisplayDeviceName, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            SelectionChanged="DisplayComboBox_SelectionChanged"/>
-
-                    <TextBlock Text="Mode" />
-
-                    <ComboBox
-            x:Name="ModeComboBox"
-            Margin="0,5,0,0"
-            ItemsSource="{Binding AvailableModes}"
-            SelectionChanged="ModeComboBox_SelectionChanged" />
-
-                </StackPanel>
-            </Border>
-
-            <Border Style="{StaticResource DsCard}">
-                <StackPanel>
-
-                    <TextBlock
-            Text="OPTIONS"
-            FontSize="16"
-            FontWeight="SemiBold"
-            Margin="0,0,0,12"/>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Largeur"/>
-                            <TextBox
-                    x:Name="WidthTextBox"
-                    Margin="0,5,0,0"
-                    PreviewTextInput="NumericOnly_PreviewTextInput"
-                    Text="{Binding SelectedItem.Width, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Hauteur"/>
-                            <TextBox
-                    x:Name="HeightTextBox"
-                    Margin="0,5,0,0"
-                    PreviewTextInput="NumericOnly_PreviewTextInput"
-                    Text="{Binding SelectedItem.Height, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Text="Fréquence"/>
-                            <TextBox
-                    x:Name="FrequencyTextBox"
-                    Margin="0,5,0,0"
-                    PreviewTextInput="NumericOnly_PreviewTextInput"
-                    Text="{Binding SelectedItem.Frequency, ElementName=ProfilesListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <CheckBox
-            x:Name="CustomResolutionCheckBox"
-            Content="Créer aussi cette résolution personnalisée dans Windows"
-            Margin="0,16,0,0"
-            IsChecked="{Binding SelectedItem.CreateCustomResolution, ElementName=ProfilesListBox, Mode=TwoWay}"/>
-
-                </StackPanel>
-            </Border>
-            <StackPanel Orientation="Horizontal">
-                <Button Content="💾 Enregistrer"
-            Width="130"
-            Margin="0,0,10,0"
-            Click="SaveButton_Click"/>
-
-                <Button Content="➕ Nouveau profil"
-        Width="140"
-        Margin="0,0,10,0"
-        Click="NewProfileButton_Click"/>
-
-                <Button Content="🗑 Supprimer"
-        Width="120"
-        Click="DeleteButton_Click"/>
             </StackPanel>
-
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

@@ -1,316 +1,395 @@
-# 📘 DisplaySwitcher — État du projet (Juin 2026)
+# DisplaySwitcher
 
-## Objectif
+Version du projet : Pré-v1.0
+Framework : .NET 10 / WPF
+IDE : Visual Studio 2026 Community
 
-DisplaySwitcher est une application WPF destinée à **un usage personnel**.
+---
 
-Ses objectifs sont :
+# Vision du projet
 
-* Changer rapidement de résolution et de fréquence d'affichage.
-* Gérer plusieurs profils d'affichage.
-* Remplacer les scripts PowerShell initiaux.
-* Servir de support d'apprentissage du développement C# / WPF.
+DisplaySwitcher est une application Windows permettant de changer rapidement de configuration d'affichage.
 
-Le projet pourra éventuellement devenir open source, mais **ce n'est pas un objectif prioritaire**.
+L'objectif est de remplacer un script PowerShell par une véritable application moderne, agréable à utiliser et capable de gérer :
+
+- des profils d'affichage
+- des résolutions natives
+- des résolutions personnalisées
+- plusieurs écrans
+- une interface moderne
+- un fonctionnement dans le Tray Windows
+
+Le projet privilégie la simplicité d'utilisation tout en exploitant les API natives de Windows lorsque cela apporte une réelle valeur.
+
+---
+
+# Etat actuel du projet
+
+## Fonctionnel
+
+### Dashboard
+
+✔ Carte "Etat actuel"
+
+Affiche :
+
+- nom commercial du moniteur
+- résolution actuelle
+- fréquence actuelle
+
+Les données proviennent maintenant de DisplayConfig.
+
+---
+
+✔ Carte "Profil à appliquer"
+
+- sélection d'un profil
+- application immédiate
+
+---
+
+✔ Gestion des profils
+
+- création
+- modification
+- suppression
+- sauvegarde JSON
+
+---
+
+✔ Tray
+
+- ouverture de l'application
+- application d'un profil
+- accès à la gestion des profils
+
+---
+
+# Architecture
+
+Le projet est organisé en couches.
+
+```
+UI
+│
+├── MainWindow
+├── ProfileManagerWindow
+│
+Services
+│
+├── DisplayConfigService
+├── DisplayService
+├── ProfileService
+├── TrayIconService
+├── MonitorIdentificationService
+│
+Native
+│
+├── NativeMethods
+├── DisplayConfigStructures
+│
+Models
+```
+
+Règle fondamentale :
+
+La UI ne parle jamais directement à Win32.
+
+Toute communication avec Windows passe par les Services.
+
+---
+
+# DisplayConfig
+
+DisplayConfig devient progressivement le moteur principal de l'application.
+
+Aujourd'hui :
+
+✔ QueryDisplayConfig
+
+✔ FriendlyName
+
+✔ Width
+
+✔ Height
+
+✔ RefreshRate
+
+Le Dashboard n'utilise plus DisplayService pour ces informations.
+
+---
+
+DisplayConfigService expose actuellement :
+
+```
+GetCurrentConfiguration()
+
+GetCurrentDisplayState()
+```
+
+CurrentDisplayState contient :
+
+```
+FriendlyName
+
+Width
+
+Height
+
+RefreshRate
+```
+
+---
+
+# DisplayService
+
+DisplayService est encore présent.
+
+Son rôle diminue progressivement.
+
+L'objectif est qu'il ne reste utilisé que pour appliquer une résolution tant que DisplayConfig ne remplace pas complètement cette partie.
+
+---
+
+# MonitorIdentificationService
+
+Responsable de l'identification physique des écrans.
+
+Permet le rapprochement WMI ↔ DisplayConfig.
+
+Ne pas mélanger ses responsabilités avec DisplayConfigService.
+
+---
+
+# Native
+
+Le dossier Native contient uniquement l'interop Win32.
+
+Aucune logique métier.
+
+Aucune UI.
+
+Uniquement :
+
+- structures
+- P/Invoke
+- enums
+
+---
+
+# Design System
+
+Toutes les fenêtres utilisent un Design System commun.
+
+Aujourd'hui :
+
+✔ DsCard
+
+✔ DsButton
+
+✔ DsPrimaryButton
+
+✔ DsHeaderButton
+
+✔ TextBox
+
+✔ CheckBox
+
+La ComboBox est en cours de refonte.
+
+Objectif :
+
+Créer un véritable DsComboBox réutilisable dans toute l'application.
+
+---
+
+# JSON
+
+Les profils sont enregistrés dans :
+
+profiles.json
+
+Chaque profil contient notamment :
+
+- nom
+- écran
+- largeur
+- hauteur
+- fréquence
+- création éventuelle d'une résolution personnalisée
+
+---
+
+# Priorités de développement
+
+## PRIORITE 1
+
+Résolutions personnalisées
+
+Objectif :
+
+Pouvoir créer un profil contenant une résolution non native.
+
+Lors de l'enregistrement :
+
+- création automatique de la résolution personnalisée dans Windows
+- sauvegarde du profil
+
+C'est actuellement la fonctionnalité principale restante.
+
+---
+
+## PRIORITE 2
+
+Finaliser le Design System
+
+- ComboBox
+- petits problèmes visuels
+
+Exemple :
+
+Gestion des profils :
+
+les ComboBox utilisent encore le template WPF.
+
+---
+
+## PRIORITE 3
+
+Compléter DisplayConfig
+
+Ajouter :
+
+- type de connexion (DisplayPort / HDMI)
+- fabricant
+- HDR
+- VRR
+
+Ces informations alimenteront la carte Etat actuel.
+
+---
+
+## PRIORITE 4
+
+Paramètres
+
+Ajouter une fenêtre Paramètres.
+
+Prévoir :
+
+- lancement au démarrage
+- démarrage réduit dans le Tray
+
+---
+
+## PRIORITE 5
+
+Raccourcis clavier
+
+Pouvoir associer un raccourci à un profil.
+
+Exemple :
+
+CTRL+ALT+F1
+
+↓
+
+Profil Gaming
+
+---
+
+## PRIORITE 6
+
+Notifications
+
+Après application d'un profil :
+
+Afficher une notification Windows moderne reprenant le Design DisplaySwitcher.
 
 ---
 
 # Philosophie du projet
 
-Nous avons adopté deux règles.
+Toujours privilégier :
 
-## 1. Daily Driver
+une fonctionnalité visible
 
-Chaque fonctionnalité doit améliorer l'utilisation quotidienne.
+plutôt qu'un long refactoring invisible.
 
-On ne développe pas des fonctionnalités "parce que c'est possible".
-
-On les développe parce qu'elles apportent un vrai confort.
+Les refactorings sont acceptés uniquement lorsqu'ils servent une fonctionnalité.
 
 ---
 
-## 2. Simplicité
+# Méthode de travail
 
-Nous préférons :
+Le projet est développé par petites fonctionnalités.
 
-* une architecture propre,
-* du code lisible,
-* peu de classes,
+Chaque séance doit produire un résultat visible.
 
-plutôt qu'une architecture compliquée.
+Eviter les longues phases de préparation.
 
-On crée un nouveau service uniquement lorsqu'un besoin réel apparaît.
+Privilégier :
 
----
-
-# Technologies
-
-* C#
-* .NET 10
-* WPF
-* JSON
-* Git
-
----
-
-# Architecture actuelle
-
-```text
-DisplaySwitcher
-│
-├── Models
-│   └── DisplayProfile.cs
-│
-├── Services
-│   ├── DisplayService.cs
-│   ├── ProfileService.cs
-│   └── TrayIconService.cs
-│
-├── Windows
-│   ├── MainWindow.xaml
-│   └── ProfileManagerWindow.xaml
-│
-├── Resources
-│   └── DisplaySwitcher.ico
-│
-├── Data
-│   └── profiles.json
-│
-└── App.xaml
-```
-
----
-
-# DisplayProfile
-
-Contient actuellement :
-
-```csharp
-Name
-Width
-Height
-Frequency
-IsSelected
-CreateCustomResolution
-```
-
----
-
-# Fonctionnalités terminées
-
-## MainWindow
-
-* Affichage des profils.
-* Profil sélectionné.
-* Application d'une résolution.
-* Détection du profil actif.
-* Interface redimensionnable.
-* Bouton Appliquer.
-
----
-
-## Tray
-
-* Icône.
-* Menu dynamique.
-* Profil actif coché.
-* Changement de profil.
-* Ouvrir DisplaySwitcher.
-* Gérer les profils.
-* Quitter.
-
----
-
-## Gestionnaire de profils
-
-Fonctionnel.
-
-Il permet :
-
-* afficher les profils ;
-* sélectionner un profil ;
-* modifier un profil ;
-* ajouter un profil ;
-* supprimer un profil ;
-* sauvegarder dans le JSON.
-
-Le tray est automatiquement rafraîchi.
-
----
-
-## Validation
-
-Les champs numériques acceptent uniquement des chiffres.
-
----
-
-# Décisions d'architecture
-
-## ObservableCollection
-
-Toute l'interface utilise :
-
-```csharp
-ObservableCollection<DisplayProfile>
-```
-
-Le JSON reste basé sur :
-
-```csharp
-List<DisplayProfile>
-```
-
-afin que `ProfileService` reste indépendant de WPF.
-
----
-
-## Communication
-
-Les fenêtres communiquent via des événements.
-
-Jamais directement.
-
-Exemple :
-
-```text
-TrayIconService
+Objectif
 
 ↓
 
-ProfileRequested
+Code
 
 ↓
 
-MainWindow
-```
-
-Même principe pour :
-
-```text
-ProfileManagerWindow
+Compilation
 
 ↓
 
-ProfilesSaved
+Validation
 
 ↓
 
-MainWindow
-```
+Commit
+
+Le développeur préfère avancer rapidement sur des fonctionnalités concrètes plutôt que passer beaucoup de temps sur la théorie.
+
+Les réponses doivent donc être orientées :
+
+- code
+- architecture utile
+- résultats visibles
+
+et éviter de "tourner autour du pot".
 
 ---
 
-# Ce qui reste à améliorer
+# Dernier état connu
 
-Gestionnaire :
+Dernière fonctionnalité terminée :
 
-* sélection automatique après suppression (fait) ;
-* validation du collage ;
-* duplication d'un profil ;
-* Ctrl+S ;
-* annulation des modifications.
+DisplayConfig alimente maintenant le Dashboard avec :
 
-Ces améliorations sont secondaires.
+✔ Nom commercial
 
----
+✔ Résolution
 
-# Priorité actuelle
+✔ Fréquence
 
-Créer des résolutions personnalisées Windows.
+Prochaine étape :
 
-Nous avons déjà ajouté dans le modèle :
+1. Corriger définitivement le Design System des ComboBox.
 
-```csharp
-CreateCustomResolution
-```
+2. Implémenter les résolutions personnalisées (fonctionnalité prioritaire).
 
-et dans l'interface :
+3. Reprendre l'enrichissement DisplayConfig.
 
-```text
-☑ Créer aussi cette résolution personnalisée dans Windows
-```
+# Règle d'or
 
-La fonctionnalité n'est pas encore implémentée.
+Avant chaque nouvelle fonctionnalité, toujours se poser la question :
 
----
+"Est-ce que cette fonctionnalité rend DisplaySwitcher plus utilisable aujourd'hui ?"
 
-# Fonctionnalités futures
+Si la réponse est oui,
+elle est prioritaire.
 
-Ordre de priorité :
+Sinon,
+elle peut attendre.
 
-1. Résolutions personnalisées.
-2. Démarrage avec Windows.
-3. Bouton "Gérer les profils" dans la fenêtre principale.
-4. Détection automatique d'applications (Rust, etc.).
-5. Multi-écrans.
-6. Raccourcis clavier.
-7. Paramètres.
-
----
-
-# Notre façon de travailler
-
-Nous travaillons par petites étapes.
-
-À chaque étape :
-
-* l'application compile ;
-* elle reste fonctionnelle ;
-* un commit Git peut être réalisé.
-
-Nous privilégions toujours les explications avant le code.
-
----
-
-## Ce que j'ajouterais à ce document
-
-Je proposerais même de créer un fichier **`PROJECT.md`** à la racine du dépôt Git.
-
-Pas pour faire de la documentation "pour GitHub", mais pour **nous**.
-
-Ainsi, si dans trois mois tu reviens sur le projet, ou si nous reprenons le développement dans une nouvelle conversation, nous aurons immédiatement un point de référence fiable.
-
----
-
-Je dois te dire une dernière chose.
-
-Depuis le début, je t'ai accompagné comme si nous construisions une application. Mais aujourd'hui, j'ai l'impression que nous avons surtout construit **une manière de travailler ensemble** : des étapes courtes, une application toujours compilable, des choix expliqués, des refactorings uniquement quand ils apportent une vraie valeur.
-
-J'aimerais conserver exactement cette méthode pour la suite, parce que je trouve qu'elle correspond très bien à ton objectif : **apprendre en construisant un outil que tu utilises réellement**. C'est, à mon avis, la meilleure façon de progresser sans perdre le plaisir de développer.
-
-
-# Principes de développement
-
-- L'application doit toujours compiler après chaque étape.
-- Chaque fonctionnalité doit pouvoir être validée avant de passer à la suivante.
-- Les explications précèdent toujours le code.
-- Les refactorings ne sont réalisés que s'ils apportent une vraie valeur.
-- Le projet est destiné en priorité à un usage personnel ("Daily Driver").
-- Les fonctionnalités sont développées en fonction de leur utilité réelle.
-
-# Interface utilisateur (V2)
-
-Le Profile Manager suit la maquette V2 validée.
-
-Principes :
-
-- Interface sombre.
-- Accent vert.
-- Le mode standard est privilégié.
-- Le mode personnalisé est réservé aux résolutions non disponibles.
-- Les écrans sont sélectionnés avant les modes.
-
-## Vision à long terme
-
-DisplaySwitcher n'est pas uniquement un changeur de résolution.
-
-L'objectif est de devenir un gestionnaire de profils d'affichage et d'environnement permettant de restaurer automatiquement une configuration optimale selon le contexte d'utilisation.
-
-Les profils pourront, à terme, inclure :
-
-- paramètres d'affichage ;
-- paramètres GPU (selon les API disponibles) ;
-- paramètres Windows ;
-- automatisations ;
-- lancement d'applications.
-
+DisplaySwitcher est développé comme un produit, pas comme un exercice technique.

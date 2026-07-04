@@ -10,9 +10,13 @@ namespace DisplaySwitcher
 {
     public partial class ProfileManagerWindow : Window
     {
+        private bool _isLoadingModes;
+
         public ObservableCollection<DisplayProfile> Profiles { get; }
         public ObservableCollection<DisplayModeInfo> AvailableModes { get; } = new();
         public ObservableCollection<DisplayDeviceInfo> Displays { get; } = new();
+
+        public event Action? ProfilesSaved;
 
         public ProfileManagerWindow(ObservableCollection<DisplayProfile> profiles)
         {
@@ -30,27 +34,39 @@ namespace DisplaySwitcher
             DataContext = this;
         }
 
-        public event Action? ProfilesSaved;
-
         private void LoadAvailableModes(string deviceName)
         {
+            _isLoadingModes = true;
+
             AvailableModes.Clear();
+            ModeComboBox.SelectedItem = null;
 
             if (string.IsNullOrWhiteSpace(deviceName))
+            {
+                _isLoadingModes = false;
                 return;
+            }
 
             foreach (DisplayModeInfo mode in DisplayService.GetAvailableModes(deviceName))
             {
                 AvailableModes.Add(mode);
             }
-        }
 
-        private void DisplayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ProfilesListBox.SelectedItem is not DisplayProfile selectedProfile)
-                return;
+            if (ProfilesListBox.SelectedItem is DisplayProfile profile)
+            {
+                DisplayModeInfo? matchingMode =
+                    AvailableModes.FirstOrDefault(mode =>
+                        mode.Width == profile.Width &&
+                        mode.Height == profile.Height &&
+                        mode.Frequency == profile.Frequency);
 
-            LoadAvailableModes(selectedProfile.DisplayDeviceName);
+                if (matchingMode != null)
+                {
+                    ModeComboBox.SelectedItem = matchingMode;
+                }
+            }
+
+            _isLoadingModes = false;
         }
 
         private void ProfilesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -72,6 +88,30 @@ namespace DisplaySwitcher
             LoadAvailableModes(selectedProfile.DisplayDeviceName);
         }
 
+        private void DisplayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ProfilesListBox.SelectedItem is not DisplayProfile selectedProfile)
+                return;
+
+            LoadAvailableModes(selectedProfile.DisplayDeviceName);
+        }
+
+        private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_isLoadingModes)
+                return;
+
+            if (ProfilesListBox.SelectedItem is not DisplayProfile profile)
+                return;
+
+            if (ModeComboBox.SelectedItem is not DisplayModeInfo mode)
+                return;
+
+            profile.Width = mode.Width;
+            profile.Height = mode.Height;
+            profile.Frequency = mode.Frequency;
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             ProfileService.SaveProfiles(Profiles.ToList());
@@ -83,12 +123,17 @@ namespace DisplaySwitcher
 
         private void NewProfileButton_Click(object sender, RoutedEventArgs e)
         {
+            DisplayDeviceInfo? primaryDisplay =
+                Displays.FirstOrDefault(display => display.IsPrimary)
+                ?? Displays.FirstOrDefault();
+
             DisplayProfile profile = new DisplayProfile
             {
                 Name = GetUniqueProfileName("Nouveau profil"),
-                Width = 1920,
-                Height = 1080,
-                Frequency = 60
+                DisplayDeviceName = primaryDisplay?.WindowsName ?? string.Empty,
+                Width = primaryDisplay?.Width ?? 1920,
+                Height = primaryDisplay?.Height ?? 1080,
+                Frequency = primaryDisplay?.Frequency ?? 60
             };
 
             Profiles.Add(profile);
@@ -151,24 +196,6 @@ namespace DisplaySwitcher
         private void NumericOnly_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             e.Handled = !int.TryParse(e.Text, out _);
-        }
-        private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ProfilesListBox.SelectedItem is not DisplayProfile profile)
-            {
-                System.Windows.MessageBox.Show("Aucun profil sélectionné.");
-                return;
-            }
-
-            if (ModeComboBox.SelectedItem is not DisplayModeInfo mode)
-            {
-                System.Windows.MessageBox.Show("Aucun mode sélectionné.");
-                return;
-            }
-
-            profile.Width = mode.Width;
-            profile.Height = mode.Height;
-            profile.Frequency = mode.Frequency;
         }
     }
 }
