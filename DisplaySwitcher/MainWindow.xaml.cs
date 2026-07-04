@@ -1,5 +1,6 @@
 ﻿using DisplaySwitcher.Models;
 using DisplaySwitcher.Services;
+using DisplaySwitcher.Services.Edid;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -195,6 +196,15 @@ namespace DisplaySwitcher
             RefreshCurrentResolutionText();
             SelectActiveProfile();
             RefreshCurrentProfileCard();
+
+            EdidOverrideService edidOverrideService = new();
+            string dumpPath = edidOverrideService.DumpDetectedEdidsToDesktop();
+
+            System.Windows.MessageBox.Show(
+                $"Dump EDID généré :\n{dumpPath}",
+                "DisplaySwitcher EDID",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         protected override void OnStateChanged(EventArgs e)
