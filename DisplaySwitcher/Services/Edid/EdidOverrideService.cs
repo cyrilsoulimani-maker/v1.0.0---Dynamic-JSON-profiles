@@ -1,7 +1,9 @@
 ﻿using DisplaySwitcher.Services.Edid.Models;
+using DisplaySwitcher.Services.Timings;
 using Microsoft.Win32;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace DisplaySwitcher.Services.Edid;
@@ -67,6 +69,11 @@ public class EdidOverrideService
                     builder.AppendLine($"Serial number         : {parsed.SerialNumber}");
                     builder.AppendLine($"Monitor name          : {parsed.MonitorName}");
                     builder.AppendLine($"EDID hex              : {Convert.ToHexString(edid)}");
+
+                    if (parsed.IsValidHeader && parsed.IsChecksumValid)
+                    {
+                        AppendEditorDryRun(builder, edid);
+                    }
                 }
 
                 builder.AppendLine();
@@ -75,5 +82,43 @@ public class EdidOverrideService
 
         File.WriteAllText(outputPath, builder.ToString());
         return outputPath;
+    }
+
+    private static void AppendEditorDryRun(StringBuilder builder, byte[] edid)
+    {
+        CvtReducedBlankingTimingCalculator calculator = new();
+
+        TimingResult timing =
+            calculator.Calculate(
+                width: 1500,
+                height: 790,
+                refreshRate: 60,
+                horizontalImageSizeMm: 600,
+                verticalImageSizeMm: 320);
+
+        EdidDetailedTimingDescriptor descriptor =
+            timing.ToDetailedTimingDescriptor();
+
+        EdidEditor editor = new(edid);
+        bool beforeChecksum = editor.IsBaseBlockChecksumValid();
+
+        editor.ReplaceBaseDetailedTiming(
+            index: 0,
+            descriptor);
+
+        byte[] modifiedEdid = editor.Build();
+        bool afterChecksum =
+            EdidChecksum.IsBlockChecksumValid(modifiedEdid.Take(128).ToArray());
+
+        builder.AppendLine();
+        builder.AppendLine("---- EDID EDITOR DRY RUN ----");
+        builder.AppendLine($"Timing calculator      : CVT Reduced Blanking");
+        builder.AppendLine($"Resolution             : {timing.Width} × {timing.Height} @ {timing.RefreshRate} Hz");
+        builder.AppendLine($"Pixel clock            : {timing.PixelClockKhz} kHz");
+        builder.AppendLine($"Horizontal blanking    : {timing.HorizontalBlanking}");
+        builder.AppendLine($"Vertical blanking      : {timing.VerticalBlanking}");
+        builder.AppendLine($"Before checksum valid  : {beforeChecksum}");
+        builder.AppendLine($"After checksum valid   : {afterChecksum}");
+        builder.AppendLine($"Modified EDID hex      : {Convert.ToHexString(modifiedEdid)}");
     }
 }
