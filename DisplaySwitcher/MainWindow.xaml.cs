@@ -208,9 +208,9 @@ namespace DisplaySwitcher
 
             string previewReportPath =
                 edidPreviewService.ExportPreviewForActiveDisplaysToDesktop(
-                    width: 1500,
-                    height: 790,
-                    refreshRate: 60);
+width: 1496,
+height: 792,
+refreshRate: 60);
 
             System.Windows.MessageBox.Show(
                 $"Dump EDID généré :\n{dumpPath}\n\nBackup EDID généré :\n{backupReportPath}\n\nPreview EDID généré :\n{previewReportPath}",

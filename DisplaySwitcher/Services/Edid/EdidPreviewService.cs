@@ -1,4 +1,5 @@
 ﻿using DisplaySwitcher.Models;
+using DisplaySwitcher.Services.Display;
 using DisplaySwitcher.Services.Edid.Models;
 using System;
 using System.IO;
@@ -24,6 +25,7 @@ public class EdidPreviewService
         EdidLocator locator = new();
         EdidOverrideBuilder builder = new();
         EdidRegistryWriter registryWriter = new();
+        DisplayRefreshService refreshService = new();
 
         IReadOnlyList<DisplayConfigMonitor> monitors =
             displayConfigService.GetCurrentConfiguration();
@@ -80,6 +82,21 @@ public class EdidPreviewService
                     result.ModifiedEdid,
                     out string writeMessage);
 
+            bool refreshOk = false;
+
+            if (writeOk)
+            {
+                refreshOk =
+                    refreshService.NotifyDisplaySettingsChanged();
+            }
+
+            bool modeAvailable =
+                DisplayService.GetAvailableModes(monitor.DeviceName)
+                    .Any(mode =>
+                        mode.Width == width &&
+                        mode.Height == height &&
+                        mode.Frequency == refreshRate);
+
             report.AppendLine("Preview       : OK");
             report.AppendLine($"EDID name     : {locatedEdid.DisplayName}");
             report.AppendLine($"Registry path : {locatedEdid.RegistryPath}");
@@ -93,6 +110,10 @@ public class EdidPreviewService
             report.AppendLine($"Block count   : {result.ModifiedEdid.Length / 128}");
             report.AppendLine($"Write OK      : {writeOk}");
             report.AppendLine($"Message       : {writeMessage}");
+            report.AppendLine();
+            report.AppendLine("Display refresh test:");
+            report.AppendLine($"Notify OK     : {refreshOk}");
+            report.AppendLine($"Mode visible  : {modeAvailable}");
 
             report.AppendLine();
             report.AppendLine("Byte diff:");
