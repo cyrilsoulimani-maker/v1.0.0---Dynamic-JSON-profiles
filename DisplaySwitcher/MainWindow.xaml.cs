@@ -198,10 +198,22 @@ namespace DisplaySwitcher
             RefreshCurrentProfileCard();
 
             EdidOverrideService edidOverrideService = new();
-            string dumpPath = edidOverrideService.DumpDetectedEdidsToDesktop();
+            EdidPreviewService edidPreviewService = new();
+
+            string dumpPath =
+                edidOverrideService.DumpDetectedEdidsToDesktop();
+
+            string backupReportPath =
+                edidOverrideService.BackupActiveEdidsToDesktop();
+
+            string previewReportPath =
+                edidPreviewService.ExportPreviewForActiveDisplaysToDesktop(
+                    width: 1500,
+                    height: 790,
+                    refreshRate: 60);
 
             System.Windows.MessageBox.Show(
-                $"Dump EDID généré :\n{dumpPath}",
+                $"Dump EDID généré :\n{dumpPath}\n\nBackup EDID généré :\n{backupReportPath}\n\nPreview EDID généré :\n{previewReportPath}",
                 "DisplaySwitcher EDID",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);

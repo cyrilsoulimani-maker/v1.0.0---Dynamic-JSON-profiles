@@ -1,6 +1,6 @@
 ﻿using DisplaySwitcher.Models;
-using DisplaySwitcher.Services.Timings;
 using DisplaySwitcher.Services.Edid.Models;
+using DisplaySwitcher.Services.Timings;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -86,6 +86,68 @@ public class EdidOverrideService
 
         File.WriteAllText(outputPath, builder.ToString());
         return outputPath;
+    }
+
+    public string BackupActiveEdidsToDesktop()
+    {
+        string backupDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            "DisplaySwitcher_EDID_Backups");
+
+        Directory.CreateDirectory(backupDirectory);
+
+        DisplayConfigService displayConfigService = new();
+        EdidLocator locator = new();
+
+        IReadOnlyList<DisplayConfigMonitor> monitors =
+            displayConfigService.GetCurrentConfiguration();
+
+        StringBuilder report = new();
+
+        report.AppendLine("========== EDID BACKUP ==========");
+        report.AppendLine($"Date : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        report.AppendLine();
+
+        foreach (DisplayConfigMonitor monitor in monitors)
+        {
+            LocatedEdid? locatedEdid =
+                locator.LocateByDisplayConfigMonitor(monitor);
+
+            report.AppendLine($"Windows device : {monitor.DeviceName}");
+            report.AppendLine($"Friendly name  : {monitor.FriendlyName}");
+            report.AppendLine($"Monitor UID    : {monitor.MonitorUid}");
+
+            if (locatedEdid == null)
+            {
+                report.AppendLine("Backup         : SKIPPED - EDID not found");
+                report.AppendLine();
+                continue;
+            }
+
+            string safeName = MakeSafeFileName(
+                $"{monitor.DeviceName}_{monitor.FriendlyName}_{locatedEdid.RegistryManufacturer}_{locatedEdid.MonitorUid}");
+
+            string backupPath = Path.Combine(
+                backupDirectory,
+                $"{safeName}_original.bin");
+
+            File.WriteAllBytes(backupPath, locatedEdid.Edid);
+
+            report.AppendLine("Backup         : OK");
+            report.AppendLine($"EDID name      : {locatedEdid.DisplayName}");
+            report.AppendLine($"Registry path  : {locatedEdid.RegistryPath}");
+            report.AppendLine($"EDID bytes     : {locatedEdid.Edid.Length}");
+            report.AppendLine($"File           : {backupPath}");
+            report.AppendLine();
+        }
+
+        string reportPath = Path.Combine(
+            backupDirectory,
+            "backup_report.txt");
+
+        File.WriteAllText(reportPath, report.ToString());
+
+        return reportPath;
     }
 
     private static void AppendDisplayConfigToEdid(StringBuilder builder)
@@ -187,5 +249,15 @@ public class EdidOverrideService
         builder.AppendLine($"Before checksum valid  : {beforeChecksum}");
         builder.AppendLine($"After checksum valid   : {afterChecksum}");
         builder.AppendLine($"Modified EDID hex      : {Convert.ToHexString(modifiedEdid)}");
+    }
+
+    private static string MakeSafeFileName(string value)
+    {
+        foreach (char invalidChar in Path.GetInvalidFileNameChars())
+        {
+            value = value.Replace(invalidChar, '_');
+        }
+
+        return value.Replace("\\", "_").Replace(".", "_");
     }
 }
