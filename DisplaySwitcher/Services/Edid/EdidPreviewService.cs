@@ -2,6 +2,7 @@
 using DisplaySwitcher.Services.Edid.Models;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace DisplaySwitcher.Services.Edid;
@@ -22,6 +23,7 @@ public class EdidPreviewService
         DisplayConfigService displayConfigService = new();
         EdidLocator locator = new();
         EdidOverrideBuilder builder = new();
+        EdidRegistryWriter registryWriter = new();
 
         IReadOnlyList<DisplayConfigMonitor> monitors =
             displayConfigService.GetCurrentConfiguration();
@@ -72,6 +74,12 @@ public class EdidPreviewService
             File.WriteAllBytes(originalPath, result.OriginalEdid);
             File.WriteAllBytes(modifiedPath, result.ModifiedEdid);
 
+            bool writeOk =
+                registryWriter.TryWriteOverride(
+                    locatedEdid,
+                    result.ModifiedEdid,
+                    out string writeMessage);
+
             report.AppendLine("Preview       : OK");
             report.AppendLine($"EDID name     : {locatedEdid.DisplayName}");
             report.AppendLine($"Registry path : {locatedEdid.RegistryPath}");
@@ -80,6 +88,11 @@ public class EdidPreviewService
             report.AppendLine($"Changed bytes : {result.ChangedByteCount}");
             report.AppendLine($"Original file : {originalPath}");
             report.AppendLine($"Preview file  : {modifiedPath}");
+            report.AppendLine();
+            report.AppendLine("Registry write test:");
+            report.AppendLine($"Block count   : {result.ModifiedEdid.Length / 128}");
+            report.AppendLine($"Write OK      : {writeOk}");
+            report.AppendLine($"Message       : {writeMessage}");
 
             report.AppendLine();
             report.AppendLine("Byte diff:");
